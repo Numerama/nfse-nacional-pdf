@@ -9,6 +9,7 @@ class NfsePdfGenerator
     private $pdf;
     private $data;
     private $margin = 5;
+    private $cancelada = false;
     private $logoSvg = null;
     private $headerInfo = [
         'municipalityLine' => null,
@@ -40,6 +41,12 @@ class NfsePdfGenerator
     public function setLogoSvg(string $svgContent)
     {
         $this->logoSvg = $svgContent;
+
+        return $this;
+    }
+
+    public function setCancelada(bool $cancelada) {
+        $this->cancelada = $cancelada;
 
         return $this;
     }
@@ -168,7 +175,22 @@ class NfsePdfGenerator
         // This ensures it encompasses everything including "INFORMAÇÕES COMPLEMENTARES"
         $this->drawDocumentBorder();
 
+        if ($this->cancelada) {
+            $this->drawWatermark('CANCELADA');
+        }
+
         return $this->pdf;
+    }
+
+    private function drawWatermark(string $texto) {
+        $this->pdf->SetFont('helvetica', '', 80);
+        $this->pdf->SetTextColor(190, 190, 190);
+        $this->pdf->StartTransform();
+        $this->pdf->Rotate(45, 105, 148.5);
+        $this->pdf->SetXY(5, 120);
+        $this->pdf->Cell(200, 20, $texto, 0, 0, 'C');
+        $this->pdf->StopTransform();
+        $this->pdf->SetTextColor(0, 0, 0);
     }
 
     private function drawDocumentBorder()
