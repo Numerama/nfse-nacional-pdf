@@ -114,6 +114,7 @@ class NfsePdfGenerator
             'servico' => [
                 'codTribNac' => (string)$dps->serv->cServ->cTribNac,
                 'descricao' => (string)$dps->serv->cServ->xDescServ,
+                'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '',
             ],
             'valores' => [
                 'valorServico' => (float)$dps->valores->vServPrest->vServ,
@@ -231,7 +232,7 @@ class NfsePdfGenerator
         if (!empty($this->logoSvg)) {
             // TCPDF: '@' prefix means raw SVG content
             $logoX = $rightX; // left edge of the right header block
-            $this->pdf->ImageSVG('@' . $this->logoSvg, $logoX, $startY, $logoWidth, '', '', '', 0, false);
+            $this->pdf->Image($this->logoSvg, $logoX +3, $startY, $logoWidth -2, '', 'PNG', '', '', false, 300, '', false, false, 0, false, false, false);
         }
 
         // Text block to the RIGHT of the SVG logo
@@ -959,6 +960,9 @@ class NfsePdfGenerator
 
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'INFORMAÇÕES COMPLEMENTARES', 0, 1, 'L');
+
+        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->MultiCell(0, 4, $infoComplementar, 0, 'L', false, 1);
     }
 
     private function addTableRowWithBorders($headers, $data, $widths)
