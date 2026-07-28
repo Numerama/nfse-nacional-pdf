@@ -109,13 +109,13 @@ class NfsePdfGenerator
                 'nome' => (string)$dps->toma->xNome,
                 'IM' => (string)($dps->toma->IM ?? ''),
                 'email' => (string)$dps->toma->email,
-                'logradouro' => (string)$dps->toma->end->xLgr,
-                'numero' => (string)$dps->toma->end->nro,
-                'complemento' => (string)$dps->toma->end->xCpl,
-                'bairro' => (string)$dps->toma->end->xBairro,
-                'municipio' => (string)(($dps->toma->end->endNac->cMun ?? $dps->toma->end->endExt->cMun) ?? ''),
+                'logradouro' => (string)($dps->toma->end->xLgr ?? ''),
+                'numero' => (string)($dps->toma->end->nro ?? ''),
+                'complemento' => (string)($dps->toma->end->xCpl ?? ''),
+                'bairro' => (string)($dps->toma->end->xBairro ?? ''),
+                'municipio' => (string)($dps->toma->end->endNac->cMun ?? ''), // Tomador de exterior $dps->toma->end->endExt->cMun
                 'uf' => (string)$infNFSe->emit->enderNac->UF,
-                'cep' => $this->formatCep((string)(($dps->toma->end->endNac->CEP ?? $dps->toma->end->endExt->CEP) ?? '')),
+                'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '')), // Tomador de exterior $dps->toma->end->endExt->CEP
                 'fone' => $this->formatPhone((string)$dps->toma->fone),
             ],
             'servico' => [
