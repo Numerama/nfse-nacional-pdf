@@ -9,7 +9,6 @@ class NfsePdfGenerator
     private $pdf;
     private $data;
     private $margin = 5;
-    private $cancelada = false;
     private $logoSvg = null;
     private $headerInfo = [
         'municipalityLine' => null,
@@ -21,8 +20,8 @@ class NfsePdfGenerator
     public function __construct()
     {
         $this->pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-        $this->pdf->SetCreator('NFS-e PDF Generator');
-        $this->pdf->SetAuthor('NFS-e System');
+        $this->pdf->SetCreator('Software Numerama');
+        $this->pdf->SetAuthor('Numerama');
         $this->pdf->SetTitle('DANFSe');
         $this->pdf->SetSubject('Documento Auxiliar da NFS-e');
         $this->pdf->SetMargins($this->margin, $this->margin, $this->margin);
@@ -50,6 +49,18 @@ class NfsePdfGenerator
 
         return $this;
     }
+
+    public function setCidadeTomador(string $cidadeTomador) {
+        $this->cidadeTomador = $cidadeTomador;
+
+        return $this;
+    }
+    public function setUfTomador(string $ufTomador) {
+        $this->ufTomador = $ufTomador;
+
+        return $this;
+    }
+
 
     public function setHeaderInfo(array $headerInfo)
     {
@@ -113,15 +124,15 @@ class NfsePdfGenerator
                 'numero' => (string)($dps->toma->end->nro ?? ''),
                 'complemento' => (string)($dps->toma->end->xCpl ?? ''),
                 'bairro' => (string)($dps->toma->end->xBairro ?? ''),
-                'municipio' => (string)($dps->toma->end->endNac->cMun ?? ''), // Tomador de exterior $dps->toma->end->endExt->cMun
-                'uf' => (string)$infNFSe->emit->enderNac->UF,
-                'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '')), // Tomador de exterior $dps->toma->end->endExt->CEP
+                'municipio' => (string)($dps->toma->end->endNac->cMun ? $this->cidadeTomador : ''), // $dps->toma->end->endExt->cMun
+                'uf' => (string)($dps->toma->end->endNac->cMun ? $this->ufTomador : ''), //$infNFSe->emit->enderNac->UF,
+                'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '')), // $dps->toma->end->endExt->CEP
                 'fone' => $this->formatPhone((string)$dps->toma->fone),
             ],
             'servico' => [
                 'codTribNac' => (string)$dps->serv->cServ->cTribNac,
                 'descricao' => (string)$dps->serv->cServ->xDescServ,
-                'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '',
+		'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '',
             ],
             'valores' => [
                 'valorServico' => (float)$dps->valores->vServPrest->vServ,
@@ -259,7 +270,7 @@ class NfsePdfGenerator
 
         // Text block to the RIGHT of the SVG logo
         $textX = $rightX + $logoWidth + $gap;
-        $municipalityLine = $this->headerInfo['municipalityLine'] ?? ('Prefeitura Municipal de ' . $this->data['localEmissao']);
+        $municipalityLine = $this->headerInfo['municipalityLine'] ?? ('Pref. Mun. de ' . $this->data['localEmissao']);
         $secretariatLine  = $this->headerInfo['secretariatLine']  ?? 'Secretaria Municipal da Fazenda';
         $phoneLine        = $this->headerInfo['phoneLine']        ?? '(48)3431-0074';
         $emailLine        = $this->headerInfo['emailLine']        ?? 'tributos@criciuma.sc.gov.br';
@@ -579,9 +590,9 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'CEP', 0, 1, 'L');
 
         // Data row — endereço ocupa colunas 1 e 2 (evita sobreposição pela célula vazia)
-        $municipioTomador = $this->data['localIncidencia'];
-        if (!empty($toma['uf'])) {
-            $municipioTomador .= ' - ' . $toma['uf'];
+        $municipioTomador = $this->data['localIncidencia'] . ' - ' . $this->data['emitente']['uf'];
+        if (!empty($toma['municipio']) && !empty($toma['uf'])) {
+            $municipioTomador = $toma['municipio'] . ' - ' . $toma['uf'];
         }
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row3Y + 4);
@@ -983,8 +994,8 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'INFORMAÇÕES COMPLEMENTARES', 0, 1, 'L');
 
-        $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->MultiCell(0, 4, $infoComplementar, 0, 'L', false, 1);
+	$this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->MultiCell(0, 4, $this->data['servico']['infoComplementar'], 0, 'L', false, 1);
     }
 
     private function addTableRowWithBorders($headers, $data, $widths)
