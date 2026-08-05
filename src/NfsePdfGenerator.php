@@ -132,7 +132,7 @@ class NfsePdfGenerator
             'servico' => [
                 'codTribNac' => (string)$dps->serv->cServ->cTribNac,
                 'descricao' => (string)$dps->serv->cServ->xDescServ,
-		'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '',
+                'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '',
             ],
             'valores' => [
                 'valorServico' => (float)$dps->valores->vServPrest->vServ,
@@ -156,6 +156,7 @@ class NfsePdfGenerator
                 'totTribMun' => (float)$dps->valores->trib->totTrib->pTotTrib->pTotTribMun,
                 'opSimpNac' => $opSimpNac,
                 'regApTribSN' => $regApTribSN,
+                'vRetIRRF' => (string)$dps->valores->trib->tribFed->vRetIRRF ?? '-',
             ],
         ];
 
@@ -838,6 +839,8 @@ class NfsePdfGenerator
         $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO FEDERAL', 0, 1, 'L');
         $this->pdf->SetFont('helvetica', '', 8);
 
+        $trib = $this->data['tributacao'];
+
         // Header row
         $row5Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
@@ -853,7 +856,7 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row5Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, $trib['vRetIRRF'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row5Y + 4);
         $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row5Y + 4);
@@ -994,7 +997,7 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'INFORMAÇÕES COMPLEMENTARES', 0, 1, 'L');
 
-	$this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->MultiCell(0, 4, $this->data['servico']['infoComplementar'], 0, 'L', false, 1);
     }
 
