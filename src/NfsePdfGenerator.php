@@ -124,8 +124,8 @@ class NfsePdfGenerator
                 'numero' => (string)($dps->toma->end->nro ?? ''),
                 'complemento' => (string)($dps->toma->end->xCpl ?? ''),
                 'bairro' => (string)($dps->toma->end->xBairro ?? ''),
-                'municipio' => (string)($dps->toma->end->endNac->cMun ? $this->cidadeTomador : ''), // $dps->toma->end->endExt->cMun
-                'uf' => (string)($dps->toma->end->endNac->cMun ? $this->ufTomador : ''), //$infNFSe->emit->enderNac->UF,
+                'municipio' => (string)($this->cidadeTomador ?? ''), // $dps->toma->end->endExt->cMun
+                'uf' => (string)($this->ufTomador ?? ''), //$infNFSe->emit->enderNac->UF,
                 'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '')), // $dps->toma->end->endExt->CEP
                 'fone' => $this->formatPhone((string)$dps->toma->fone),
             ],
