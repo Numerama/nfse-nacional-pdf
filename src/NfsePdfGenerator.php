@@ -148,7 +148,7 @@ class NfsePdfGenerator
                 'competencia' => $this->formatDate((string)$dps->dCompet),
                 'dataEmissao' => $this->formatDateTime((string)$dps->dhEmi),
             ],
-            'tributacao' => [
+            'tributacao' => array(
                 'tribISSQN' => (string)$dps->valores->trib->tribMun->tribISSQN,
                 'tpRetISSQN' => (string)$dps->valores->trib->tribMun->tpRetISSQN,
                 'totTribFed' => (float)$dps->valores->trib->totTrib->pTotTrib->pTotTribFed,
@@ -157,7 +157,10 @@ class NfsePdfGenerator
                 'opSimpNac' => $opSimpNac,
                 'regApTribSN' => $regApTribSN,
                 'vRetIRRF' => (string)$dps->valores->trib->tribFed->vRetIRRF ?? '-',
-            ],
+                'vRetCSLL' => (string)$dps->valores->trib->tribFed->vRetCSLL ?? '-',
+                'vPis' => (string)$dps->valores->trib->tribFed->piscofins->vPis ?? '-',
+                'vCofins' => (string)$dps->valores->trib->tribFed->piscofins->vCofins ?? '-'
+            ),
         ];
 
         return $this;
@@ -860,7 +863,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row5Y + 4);
         $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row5Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $trib['vRetCSLL'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row5Y + 4);
         $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
 
@@ -879,9 +882,9 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row6Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, $trib['vPis'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row6Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $trib['vCofins'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row6Y + 4);
         $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row6Y + 4);
