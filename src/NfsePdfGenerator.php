@@ -158,8 +158,8 @@ class NfsePdfGenerator
                 'regApTribSN' => $regApTribSN,
                 'vRetIRRF' => (string)$dps->valores->trib->tribFed->vRetIRRF ?? '-',
                 'vRetCSLL' => (string)$dps->valores->trib->tribFed->vRetCSLL ?? '-',
-                'vPis' => (string)$dps->valores->trib->tribFed->piscofins->vPis ?? '-',
-                'vCofins' => (string)$dps->valores->trib->tribFed->piscofins->vCofins ?? '-'
+                'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? (float) $dps->valores->trib->tribFed->piscofins->vPis : '-',
+                'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? (float) $dps->valores->trib->tribFed->piscofins->vCofins : '-',
             ),
         ];
 
