@@ -161,6 +161,13 @@ class NfsePdfGenerator
                 'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? (float) $dps->valores->trib->tribFed->piscofins->vPis : '-',
                 'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? (float) $dps->valores->trib->tribFed->piscofins->vCofins : '-',
             ),
+            'IbsCbs' => [
+                'cIndOp' => (string)$dps->IBSCBS->cIndOp ?? '',
+                'CST' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST ?? '',
+                'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '',
+                'cLocalidadeIncid' => (string)$infNFSe->IBSCBS->cLocalidadeIncid ?? '',
+                'xLocalidadeIncid' => (string)$infNFSe->IBSCBS->xLocalidadeIncid ?? '',
+            ]
         ];
 
         return $this;
@@ -322,7 +329,7 @@ class NfsePdfGenerator
         // Chave de Acesso row - spans all columns
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W + $col2W + $col3W + $col4W, 4, 'Chave de Acesso da NFS-e', 0, 1, 'L');
+        $this->pdf->Cell($col1W + $col2W + $col3W + $col4W, 4, 'CHAVE DE ACESSO DA NFS-e', 0, 1, 'L');
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->Cell($col1W + $col2W + $col3W + $col4W, 4, $this->data['chaveAcesso'], 0, 1, 'L');
@@ -959,7 +966,6 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 8);
         $this->pdf->SetXY($col4X, $row2Y + 4);
         $this->pdf->Cell($col4W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 1, 'L');
-        $this->pdf->Ln(2);
     }
 
     private function addTotaisTributos()
@@ -997,6 +1003,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col3W, 4, number_format($trib['totTribMun'], 2, ',', '.') . ' %', 0, 1, 'L');
         $this->pdf->Ln(5);
 
+        $this->addHorizontalLine();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'INFORMAÇÕES COMPLEMENTARES', 0, 1, 'L');
 
