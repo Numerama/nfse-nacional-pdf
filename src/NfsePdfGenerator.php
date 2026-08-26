@@ -105,42 +105,43 @@ class NfsePdfGenerator
             'emitente' => [
                 'cnpj' => $this->formatCnpjCpf((string)$infNFSe->emit->CNPJ),
                 'nome' => (string)$infNFSe->emit->xNome,
-                'IM' => (string)($infNFSe->emit->IM ?? ''),
+                'IM' => (string)($infNFSe->emit->IM ?? '-'),
                 'logradouro' => (string)$infNFSe->emit->enderNac->xLgr,
                 'numero' => (string)$infNFSe->emit->enderNac->nro,
                 'bairro' => (string)$infNFSe->emit->enderNac->xBairro,
                 'municipio' => (string)$infNFSe->emit->enderNac->cMun,
                 'uf' => (string)$infNFSe->emit->enderNac->UF,
                 'cep' => $this->formatCep((string)$infNFSe->emit->enderNac->CEP),
-                'fone' => $this->formatPhone((string)$infNFSe->emit->fone),
-                'email' => (string)$infNFSe->emit->email,
+                'fone' => isset($infNFSe->emit->fone) ? $this->formatPhone((string)$infNFSe->emit->fone) : '-',
+                'email' => (string)$infNFSe->emit->email ?? '-',
             ],
             'tomador' => [
                 'cnpj' => $this->formatCnpjCpf((string)((($dps->toma->CNPJ ?? $dps->toma->CPF) ?? $dps->toma->NIF) ?? '-')),
                 'nome' => (string)$dps->toma->xNome,
-                'IM' => (string)($dps->toma->IM ?? ''),
-                'email' => (string)$dps->toma->email,
-                'logradouro' => (string)($dps->toma->end->xLgr ?? ''),
-                'numero' => (string)($dps->toma->end->nro ?? ''),
-                'complemento' => (string)($dps->toma->end->xCpl ?? ''),
-                'bairro' => (string)($dps->toma->end->xBairro ?? ''),
-                'municipio' => (string)($this->cidadeTomador ?? ''), // $dps->toma->end->endExt->cMun
-                'uf' => (string)($this->ufTomador ?? ''), //$infNFSe->emit->enderNac->UF,
-                'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '')), // $dps->toma->end->endExt->CEP
-                'fone' => $this->formatPhone((string)$dps->toma->fone),
+                'IM' => (string)($dps->toma->IM ?? '-'),
+                'email' => (string)$dps->toma->email ?? '-',
+                'logradouro' => (string)($dps->toma->end->xLgr ?? '-'),
+                'numero' => (string)($dps->toma->end->nro ?? '-'),
+                'complemento' => (string)($dps->toma->end->xCpl ?? '-'),
+                'bairro' => (string)($dps->toma->end->xBairro ?? '-'),
+                'municipio' => (string)($this->cidadeTomador ?? '-'), // $dps->toma->end->endExt->cMun
+                'uf' => (string)($this->ufTomador ?? '-'), //$infNFSe->emit->enderNac->UF,
+                'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '-')), // $dps->toma->end->endExt->CEP
+                'fone' => isset($dps->toma->fone) ? $this->formatPhone((string)$dps->toma->fone) : '-',
             ],
             'servico' => [
                 'codTribNac' => (string)$dps->serv->cServ->cTribNac,
                 'descricao' => (string)$dps->serv->cServ->xDescServ,
-                'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '',
+                'cNBS' => (string)$dps->serv->cServ->cNBS ?? '-',
+                'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '-',
             ],
             'valores' => [
                 'valorServico' => (float)$dps->valores->vServPrest->vServ,
                 'valorLiquido' => (float)$infNFSe->valores->vLiq,
                 'valorTotalRet' => (float)$infNFSe->valores->vTotalRet,
                 'bcIssqn' => (float)($infNFSe->valores->vBC ?? 0),
-                'aliqAplicada' => (float)($infNFSe->valores->pAliqAplic ?? 0),
-                'issqnApurado' => (float)($infNFSe->valores->vISSQN ?? 0),
+                'aliqAplicada' => (float)($infNFSe->valores->pAliqAplic ?? '0,00'),
+                'issqnApurado' => (float)($infNFSe->valores->vISSQN ?? '0,00'),
             ],
             'dps' => [
                 'numero' => (string)$dps->nDPS,
@@ -162,11 +163,11 @@ class NfsePdfGenerator
                 'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? (float) $dps->valores->trib->tribFed->piscofins->vCofins : '-',
             ),
             'IbsCbs' => [
-                'cIndOp' => (string)$dps->IBSCBS->cIndOp ?? '',
-                'CST' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST ?? '',
-                'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '',
-                'cLocalidadeIncid' => (string)$infNFSe->IBSCBS->cLocalidadeIncid ?? '',
-                'xLocalidadeIncid' => (string)$infNFSe->IBSCBS->xLocalidadeIncid ?? '',
+                'cIndOp' => (string)$dps->IBSCBS->cIndOp ?? '-',
+                'CST' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST ?? '-',
+                'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '-',
+                'cLocalidadeIncid' => (string)$infNFSe->IBSCBS->cLocalidadeIncid ?? '-',
+                'xLocalidadeIncid' => (string)$infNFSe->IBSCBS->xLocalidadeIncid ?? '-',
             ]
         ];
 
@@ -493,8 +494,9 @@ class NfsePdfGenerator
         $this->pdf->Cell($col3W, 4, $this->data['localEmissao'] . ' - ' . $emit['uf'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row3Y + 4);
         $this->pdf->Cell($col4W, 4, $emit['cep'], 0, 1, 'L');
+        $this->pdf->Ln(1);
 
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', 'B', 7);
         $opSimpNacMap = [
             '1' => 'Não Optante',
             '2' => 'Optante - Microempreendedor Individual (MEI)',
@@ -511,10 +513,12 @@ class NfsePdfGenerator
         $descricaoRegApTribSN = $regApTribSNMap[$regApTribSN] ?? '-';
 
         $this->pdf->SetXY($col1X, $this->pdf->GetY());
+        $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell($col1W, 4, 'Simples Nacional na Data de Competência', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $this->pdf->GetY());
         $this->pdf->Cell($col3W + $col4W, 4, 'Regime de Apuração Tributária pelo SN', 0, 1, 'L');
         $rowY = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $rowY);
         $this->pdf->Cell($col1W, 4, $descricaoSimplesNacional, 0, 0, 'L');
         $this->pdf->SetXY($col3X, $rowY);
@@ -555,9 +559,9 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $startY + 4);
         $this->pdf->Cell($col2W, 4, $toma['cnpj'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY + 4);
-        $this->pdf->Cell($col3W, 4, $this->data['tomador']['IM'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $toma['IM'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY + 4);
-        $this->pdf->Cell($col4W, 4, $this->data['tomador']['fone'], 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $toma['fone'], 0, 1, 'L');
 
         // Header row
         $row2Y = $this->pdf->GetY();
@@ -578,7 +582,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, $this->data['tomador']['email'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $toma['email'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y + 4);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
@@ -924,7 +928,7 @@ class NfsePdfGenerator
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'VALOR DA OPERAÇÃO / SERVIÇO', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'VALOR DO SERVIÇO', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'Desconto Condicionado', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
