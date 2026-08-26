@@ -113,7 +113,8 @@ class NfsePdfGenerator
                 'uf' => (string)$infNFSe->emit->enderNac->UF,
                 'cep' => $this->formatCep((string)$infNFSe->emit->enderNac->CEP),
                 'fone' => isset($infNFSe->emit->fone) ? $this->formatPhone((string)$infNFSe->emit->fone) : '-',
-                'email' => (string)$infNFSe->emit->email ?? '-',
+                'email' => ((string)($infNFSe->emit->email ?? '-')),
+                'cLocEmi' => $this->formatIBGE((string)$dps->cLocEmi ?? '-')
             ],
             'tomador' => [
                 'cnpj' => $this->formatCnpjCpf((string)((($dps->toma->CNPJ ?? $dps->toma->CPF) ?? $dps->toma->NIF) ?? '-')),
@@ -128,6 +129,7 @@ class NfsePdfGenerator
                 'uf' => (string)($this->ufTomador ?? '-'), //$infNFSe->emit->enderNac->UF,
                 'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '-')), // $dps->toma->end->endExt->CEP
                 'fone' => isset($dps->toma->fone) ? $this->formatPhone((string)$dps->toma->fone) : '-',
+                'cMun' => $this->formatIBGE((string)$dps->toma->end->endNac->cMun ?? '-')
             ],
             'servico' => [
                 'codTribNac' => (string)$dps->serv->cServ->cTribNac,
@@ -431,22 +433,22 @@ class NfsePdfGenerator
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'EMITENTE DA NFS-e', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'PRESTADOR / FORNECEDOR', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'CNPJ / CPF / NIF', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
-        $this->pdf->Cell($col3W, 4, 'Inscrição Municipal', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Indicador Municipal (Inscrição)', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY);
         $this->pdf->Cell($col4W, 4, 'Telefone', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $startY + 4);
-        $this->pdf->Cell($col1W, 4, 'Prestador do Serviço', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
         $this->pdf->Cell($col2W, 4, $emit['cnpj'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY + 4);
-        $this->pdf->Cell($col3W, 4, $this->data['emitente']['IM'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $emit['IM'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY + 4);
         $this->pdf->Cell($col4W, 4, $emit['fone'], 0, 1, 'L');
 
@@ -458,9 +460,9 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row2Y);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row2Y);
-        $this->pdf->Cell($col3W, 4, 'E-mail', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Município / Sigla UF', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y);
-        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'Código IBGE / CEP', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
@@ -469,9 +471,9 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, $emit['email'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $this->data['localEmissao'] . ' / ' . $emit['uf'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y + 4);
-        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $emit['cLocEmi'] . ' / ' . $emit['cep'], 0, 1, 'L');
 
         $endereco = $emit['logradouro'] . ', ' . $emit['numero'] . ', ' . $emit['bairro'];
         // Header row
@@ -482,18 +484,18 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row3Y);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y);
-        $this->pdf->Cell($col3W, 4, 'Município', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row3Y);
-        $this->pdf->Cell($col4W, 4, 'CEP', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'E-mail', 0, 1, 'L');
 
         // Data row — endereço ocupa colunas 1 e 2 (evita sobreposição pela célula vazia)
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row3Y + 4);
         $this->pdf->Cell($col1W + $col2W, 4, $endereco, 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y + 4);
-        $this->pdf->Cell($col3W, 4, $this->data['localEmissao'] . ' - ' . $emit['uf'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row3Y + 4);
-        $this->pdf->Cell($col4W, 4, $emit['cep'], 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $emit['email'], 0, 1, 'L');
         $this->pdf->Ln(1);
 
         $this->pdf->SetFont('helvetica', 'B', 7);
@@ -548,7 +550,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'CNPJ / CPF / NIF', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
-        $this->pdf->Cell($col3W, 4, 'Inscrição Municipal', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Indicador Municipal (Inscrição)', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY);
         $this->pdf->Cell($col4W, 4, 'Telefone', 0, 1, 'L');
 
@@ -571,20 +573,25 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row2Y);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row2Y);
-        $this->pdf->Cell($col3W, 4, 'E-mail', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Município / Sigla UF', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y);
-        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'Código IBGE / CEP', 0, 1, 'L');
 
         // Data row
+        $municipioTomador = $this->data['localIncidencia'] . ' - ' . $this->data['emitente']['uf'];
+        if (!empty($toma['municipio']) && !empty($toma['uf'])) {
+            $municipioTomador = $toma['municipio'] . ' / ' . $toma['uf'];
+        }
+
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, $toma['nome'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, $toma['email'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $municipioTomador, 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y + 4);
-        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $toma['cMun'] . ' / ' . $toma['cep'], 0, 1, 'L');
 
         $endereco = $toma['logradouro'] . ', ' . $toma['numero'];
         if (!empty($toma['complemento'])) {
@@ -600,22 +607,18 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row3Y);
         $this->pdf->Cell($col2W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y);
-        $this->pdf->Cell($col3W, 4, 'Município', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'E-mail', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row3Y);
-        $this->pdf->Cell($col4W, 4, 'CEP', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Data row — endereço ocupa colunas 1 e 2 (evita sobreposição pela célula vazia)
-        $municipioTomador = $this->data['localIncidencia'] . ' - ' . $this->data['emitente']['uf'];
-        if (!empty($toma['municipio']) && !empty($toma['uf'])) {
-            $municipioTomador = $toma['municipio'] . ' - ' . $toma['uf'];
-        }
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row3Y + 4);
         $this->pdf->Cell($col1W + $col2W, 4, $endereco, 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y + 4);
-        $this->pdf->Cell($col3W, 4, $municipioTomador, 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $toma['email'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row3Y + 4);
-        $this->pdf->Cell($col4W, 4, $toma['cep'], 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
         $this->pdf->Ln(2);
 
         $this->pdf->SetFont('helvetica', '', 7);
@@ -1058,6 +1061,16 @@ class NfsePdfGenerator
         } elseif (strlen($value) == 10) {
             return '(' . substr($value, 0, 2) . ') ' . substr($value, 2, 4) . '-' . substr($value, 6, 4);
         }
+        return $value;
+    }
+
+    private function formatIBGE($value) {
+        $value = preg_replace('/\D/', '', (string) $value);
+
+        if (strlen($value) === 7) {
+            return substr($value, 0, 2) . '.' . substr($value, 2, 5);
+        }
+
         return $value;
     }
 
