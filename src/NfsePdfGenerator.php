@@ -253,7 +253,7 @@ class NfsePdfGenerator
         $centerX = 62; // Adjusted for 2mm margin (was 70, now 70-8=62)
         $this->pdf->SetXY($centerX, $startY);
         $this->pdf->SetFont('helvetica', 'B', 9);
-        $this->pdf->Cell(50, 4, 'DANFSe v1.0', 0, 0, 'C');
+        $this->pdf->Cell(50, 4, 'DANFSe v2.0', 0, 0, 'C');
         $this->pdf->SetXY($centerX, $startY + 4);
         $this->pdf->SetFont('helvetica', 'B', 9);
         $this->pdf->Cell(50, 4, 'Documento Auxiliar da NFS-e', 0, 0, 'C');
@@ -298,7 +298,7 @@ class NfsePdfGenerator
     private function addChaveAcesso()
     {
         $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->Cell(0, 4, 'Chave de Acesso da NFS-e', 0, 1, 'L');
+        $this->pdf->Cell(0, 4, 'CHAVE DE ACESSO DA NFS-e', 0, 1, 'L');
         $this->pdf->SetFont('helvetica', '', 8);
         // No border - just display the text
         $this->pdf->Cell(0, 4, $this->data['chaveAcesso'], 0, 1, 'L');
@@ -353,11 +353,11 @@ class NfsePdfGenerator
         // Now draw the text in columns 1-3
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row1Y);
-        $this->pdf->Cell($col1W, 4, 'Número da NFS-e', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'NÚMERO DA NFS-e', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row1Y);
-        $this->pdf->Cell($col2W, 4, 'Competência da NFS-e', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'COMPETÊNCIA DA NFS-e', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row1Y);
-        $this->pdf->Cell($col3W, 4, 'Data e Hora da emissão da NFS-e', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'DATA E HORA DA EMISSÃO DA NFS-e', 0, 0, 'L');
 
         // Second row - NFS-e data
         $this->pdf->SetFont('helvetica', '', 8);
@@ -376,11 +376,11 @@ class NfsePdfGenerator
         $row3Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row3Y);
-        $this->pdf->Cell($col1W, 4, 'Número da DPS', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'NÚMERO DA DPS', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row3Y);
-        $this->pdf->Cell($col2W, 4, 'Série da DPS', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'SÉRIE DA DPS', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y);
-        $this->pdf->Cell($col3W, 4, 'Data e Hora da emissão da DPS', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'DATA E HORA DA EMISSÃO DA DPS', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row3Y);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
@@ -533,7 +533,7 @@ class NfsePdfGenerator
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'TOMADOR DO SERVIÇO', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'TOMADOR / ADQUIRENTE', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'CNPJ / CPF / NIF', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
@@ -917,7 +917,7 @@ class NfsePdfGenerator
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'Valor do Serviço', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'VALOR DA OPERAÇÃO / SERVIÇO', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'Desconto Condicionado', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
@@ -946,7 +946,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col3X, $row2Y);
         $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y);
-        $this->pdf->Cell($col4W, 4, 'Valor Líquido da NFS-e', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'VALOR LÍQUIDO DA NFS-e', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
