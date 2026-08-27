@@ -801,32 +801,28 @@ class NfsePdfGenerator
 
         $this->addHorizontalLine();
 
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO FEDERAL', 0, 1, 'L');
-        $this->pdf->SetFont('helvetica', '', 8);
-
         $trib = $this->data['tributacao'];
 
         // Header row
         $row5Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row5Y);
-        $this->pdf->Cell($col1W, 4, 'IRRF', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'TRIBUTAÇÃO FEDERAL (EXCETO CBS)', 0, 1, 'L');
         $this->pdf->SetXY($col2X, $row5Y);
-        $this->pdf->Cell($col2W, 4, 'Contribuição Previdenciária - Retida', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'IRRF', 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row5Y);
-        $this->pdf->Cell($col3W, 4, 'Contribuições Sociais - Retidas', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Contribuição Previdenciária - Retidas', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row5Y);
-        $this->pdf->Cell($col4W, 4, 'Descrição Contrib. Sociais - Retidas', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'Contribuições Sociais - Retidas', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row5Y + 4);
-        $this->pdf->Cell($col1W, 4, $trib['vRetIRRF'], 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, '', 0, 1, 'L');
         $this->pdf->SetXY($col2X, $row5Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $trib['vRetIRRF'], 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row5Y + 4);
-        $this->pdf->Cell($col3W, 4, $trib['vRetCSLL'], 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row5Y + 4);
         $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
 
@@ -838,7 +834,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row6Y);
         $this->pdf->Cell($col2W, 4, 'COFINS - Débito Apuração Própria', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row6Y);
-        $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Descrição Contrib. Sociais - Retidas', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row6Y);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
@@ -849,7 +845,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row6Y + 4);
         $this->pdf->Cell($col2W, 4, $trib['vCofins'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row6Y + 4);
-        $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row6Y + 4);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
         $this->pdf->Ln(2);
