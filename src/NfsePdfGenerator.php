@@ -862,10 +862,6 @@ class NfsePdfGenerator
         $col3W = 50;
         $col4W = 45;
 
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->Cell(0, 4, 'VALOR TOTAL DA NFS-E', 0, 1, 'L');
-        $this->pdf->SetFont('helvetica', '', 8);
-
         $val = $this->data['valores'];
         $tpRetISSQN = (string)($this->data['tributacao']['tpRetISSQN'] ?? '');
         $issqnRetido = in_array($tpRetISSQN, ['2', '3'], true) && $val['issqnApurado'] > 0
@@ -876,45 +872,45 @@ class NfsePdfGenerator
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'VALOR DO SERVIÇO', 0, 0, 'L');
+        $this->pdf->Cell(0, 4, 'VALOR TOTAL DA NFS-E', 0, 1, 'L');
         $this->pdf->SetXY($col2X, $startY);
-        $this->pdf->Cell($col2W, 4, 'Desconto Condicionado', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'VALOR DA OPERAÇÃO / SERVIÇO', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
         $this->pdf->Cell($col3W, 4, 'Desconto Incondicionado', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY);
-        $this->pdf->Cell($col4W, 4, 'ISSQN Retido', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'Desconto Condicionado', 0, 0, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $startY + 4);
-        $this->pdf->Cell($col1W, 4, 'R$ ' . number_format($val['valorServico'], 2, ',', '.'), 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'R$ ' . number_format($val['valorServico'], 2, ',', '.'), 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY + 4);
         $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY + 4);
-        $this->pdf->Cell($col4W, 4, $issqnRetido, 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
 
         // Header row
         $row2Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row2Y);
-        $this->pdf->Cell($col1W, 4, 'Total das Retenções Federais', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'Total das Retenções (ISSQN / Federais)', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y);
-        $this->pdf->Cell($col2W, 4, 'PIS/COFINS - Débito Apur. Própria', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'VALOR LÍQUIDO DA NFS-e', 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row2Y);
-        $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Total do IBS/CBS', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y);
-        $this->pdf->Cell($col4W, 4, 'VALOR LÍQUIDO DA NFS-e', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'VALOR LÍQUIDO DA NFS-e + IBS/CBS', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, '', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetFont('helvetica', 'B', 8);
         $this->pdf->SetXY($col4X, $row2Y + 4);
         $this->pdf->Cell($col4W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 1, 'L');
