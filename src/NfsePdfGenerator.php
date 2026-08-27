@@ -738,14 +738,13 @@ class NfsePdfGenerator
         $col4W = 45;
 
         $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO MUNICIPAL', 0, 1, 'L');
         $this->pdf->SetFont('helvetica', '', 8);
 
         $trib = $this->data['tributacao'];
         $val = $this->data['valores'];
         $localIncidencia = $this->data['localIncidencia'];
         if (!empty($this->data['emitente']['uf'])) {
-            $localIncidencia .= ' - ' . $this->data['emitente']['uf'];
+            $localIncidencia .= ' / ' . $this->data['emitente']['uf'];
         }
         $tpRetISSQNMap = [
             '1' => 'Não Retido',
@@ -758,95 +757,50 @@ class NfsePdfGenerator
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'Tributação do ISSQN', 0, 0, 'L');
+        $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO MUNICIPAL (ISSQN)', 0, 1, 'L');
         $this->pdf->SetXY($col2X, $startY);
-        $this->pdf->Cell($col2W, 4, 'País Resultado da Prestação do Serviço', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'Tipo de Tributação do ISSQN', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
-        $this->pdf->Cell($col3W, 4, 'Município de Incidência do ISSQN', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Município / Sigla UF / País de Incidência do ISSQN', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY);
-        $this->pdf->Cell($col4W, 4, 'Regime Especial de Tributação', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->SetXY($col1X, $startY + 4);
-        $this->pdf->Cell($col1W, 4, 'Operação Tributável', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'Operação Tributável', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY + 4);
-        $this->pdf->Cell($col3W, 4, $localIncidencia, 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $localIncidencia . ' / Brasil', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY + 4);
-        $this->pdf->Cell($col4W, 4, 'Nenhum', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Header row
         $row2Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row2Y);
-        $this->pdf->Cell($col1W, 4, 'Tipo de Imunidade', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row2Y);
-        $this->pdf->Cell($col2W, 4, 'Suspensão da Exigibilidade do ISSQN', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row2Y);
-        $this->pdf->Cell($col3W, 4, 'Número Processo Suspensão', 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row2Y);
-        $this->pdf->Cell($col4W, 4, 'Benefício Municipal', 0, 1, 'L');
-
-        // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->SetXY($col1X, $row2Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row2Y + 4);
-        $this->pdf->Cell($col2W, 4, 'Não', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row2Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
-
-        // Header row
-        $row3Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->SetXY($col1X, $row3Y);
-        $this->pdf->Cell($col1W, 4, 'Valor do Serviço', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row3Y);
-        $this->pdf->Cell($col2W, 4, 'Desconto Incondicionado', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row3Y);
-        $this->pdf->Cell($col3W, 4, 'Total Deduções/Reduções', 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row3Y);
-        $this->pdf->Cell($col4W, 4, 'Cálculo do BM', 0, 1, 'L');
-
-        // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->SetXY($col1X, $row3Y + 4);
-        $this->pdf->Cell($col1W, 4, 'R$ ' . number_format($val['valorServico'], 2, ',', '.'), 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row3Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row3Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row3Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
-
-        // Header row
-        $row4Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->SetXY($col1X, $row4Y);
         $this->pdf->Cell($col1W, 4, 'BC ISSQN', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row4Y);
+        $this->pdf->SetXY($col2X, $row2Y);
         $this->pdf->Cell($col2W, 4, 'Alíquota Aplicada', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row4Y);
+        $this->pdf->SetXY($col3X, $row2Y);
         $this->pdf->Cell($col3W, 4, 'Retenção do ISSQN', 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row4Y);
+        $this->pdf->SetXY($col4X, $row2Y);
         $this->pdf->Cell($col4W, 4, 'ISSQN Apurado', 0, 1, 'L');
 
         // Data row
         $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->SetXY($col1X, $row4Y + 4);
+        $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, $val['bcIssqn'] > 0 ? 'R$ ' . number_format($val['bcIssqn'], 2, ',', '.') : '-', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row4Y + 4);
+        $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, $val['aliqAplicada'] > 0 ? number_format($val['aliqAplicada'], 2, ',', '.') . '%' : '-', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row4Y + 4);
+        $this->pdf->SetXY($col3X, $row2Y + 4);
         $this->pdf->Cell($col3W, 4, $retencaoIssqn, 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row4Y + 4);
+        $this->pdf->SetXY($col4X, $row2Y + 4);
         $this->pdf->Cell($col4W, 4, $val['issqnApurado'] > 0 ? 'R$ ' . number_format($val['issqnApurado'], 2, ',', '.') : '-', 0, 1, 'L');
 
         $this->addHorizontalLine();
+
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO FEDERAL', 0, 1, 'L');
         $this->pdf->SetFont('helvetica', '', 8);
