@@ -93,6 +93,8 @@ class NfsePdfGenerator
             $regApTribSN = (string)$dps->prest->regTrib->regApTribSN;
         }
 
+        $tomaEndNac = $dps->toma->end->endNac ?? null;
+
         $this->data = [
             'chaveAcesso' => $chaveAcesso,
             'numeroNfse' => (string)$infNFSe->nNFSe,
@@ -127,14 +129,15 @@ class NfsePdfGenerator
                 'bairro' => (string)($dps->toma->end->xBairro ?? '-'),
                 'municipio' => (string)($this->cidadeTomador ?? '-'), // $dps->toma->end->endExt->cMun
                 'uf' => (string)($this->ufTomador ?? '-'), //$infNFSe->emit->enderNac->UF,
-                'cep' => $this->formatCep((string)($dps->toma->end->endNac->CEP ?? '-')), // $dps->toma->end->endExt->CEP
+                'cep'  => $this->formatCep((string)($tomaEndNac->CEP ?? '-')), // $dps->toma->end->endExt->CEP
                 'fone' => isset($dps->toma->fone) ? $this->formatPhone((string)$dps->toma->fone) : '-',
-                'cMun' => $this->formatIBGE((string)$dps->toma->end->endNac->cMun ?? '-')
+                'cMun' => $this->formatIBGE((string)($tomaEndNac->cMun ?? '-')),
             ],
             'servico' => [
-                'codTribNac' => (string)$dps->serv->cServ->cTribNac,
+                'codTribNac' => $this->formatCodTribNac((string)$dps->serv->cServ->cTribNac),
+                'cTribMun' => $this->formatCodTribMun((string)$dps->serv->cServ->cTribMun ?? '-'),
                 'descricao' => (string)$dps->serv->cServ->xDescServ,
-                'cNBS' => (string)$dps->serv->cServ->cNBS ?? '-',
+                'cNBS' => $this->formatNBS((string)$dps->serv->cServ->cNBS ?? '-'),
                 'infoComplementar' => (string)$dps->serv->infoCompl->xInfComp ?? '-',
             ],
             'valores' => [
@@ -637,36 +640,31 @@ class NfsePdfGenerator
         $col3W = 50;
         $col4W = 45;
 
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->Cell(0, 4, 'SERVIÇO PRESTADO', 0, 1, 'L');
-        $this->pdf->SetFont('helvetica', '', 8);
-
         $serv = $this->data['servico'];
         $startY = $this->pdf->GetY();
 
         // Header row
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'Código de Tributação Nacional', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'SERVIÇO PRESTADO', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY);
-        $this->pdf->Cell($col2W, 4, 'Código de Tributação Municipal', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, 'Código de Tributação Nacional / Municipal', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
-        $this->pdf->Cell($col3W, 4, 'Local da Prestação', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'Código da NBS', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY);
-        $this->pdf->Cell($col4W, 4, 'País da Prestação', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, 'Local da Prestação / Sigla UF / País', 0, 1, 'L');
 
-        // Data row — código nacional com quebra de linha na coluna 1
-        $this->pdf->SetFont('helvetica', '', 8);
-        $codTribFormatted = $this->formatCodTribNac($serv['codTribNac']);
-        $codTrib = $this->truncateTextToLines(
-            $codTribFormatted . ' - ' . $this->data['tribNac'],
-            $col1W,
-            3
-        );
         $dataRowY = $startY + 4;
+        $codTrib = $this->truncateTextToLines($this->data['tribNac'], $col1W, 3);
         $codTribHeight = $this->pdf->getStringHeight($col1W, $codTrib);
+        $localPrestacao = $this->data['localPrestacao'];
 
-        $this->pdf->SetXY($col1X, $dataRowY);
+        if (!empty($this->data['emitente']['uf'])) {
+            $localPrestacao .= ' / ' . $this->data['emitente']['uf'];
+        }
+
+        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->MultiCell(
             $col1W,
             4,
@@ -685,40 +683,37 @@ class NfsePdfGenerator
             'T',
             false
         );
-        $localPrestacao = $this->data['localPrestacao'];
-        if (!empty($this->data['emitente']['uf'])) {
-            $localPrestacao .= ' - ' . $this->data['emitente']['uf'];
-        }
-
-        $this->pdf->SetXY($col2X, $dataRowY);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $dataRowY);
-        $this->pdf->Cell($col3W, 4, $localPrestacao, 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $dataRowY);
-        $this->pdf->Cell($col4W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $startY + 4);
+        $this->pdf->Cell($col2W, 4, $serv['codTribNac'] . ' / ' . $serv['cTribMun'], 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $startY + 4);
+        $this->pdf->Cell($col3W, 4, $serv['cNBS'], 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $startY + 4);
+        $this->pdf->Cell($col4W, 4, $localPrestacao . ' / Brasil', 0, 1, 'L');
 
         // Descrição — abaixo do bloco do código nacional (até 3 linhas)
         $row2Y = $dataRowY + $codTribHeight;
         $this->pdf->SetY($row2Y);
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row2Y);
-        $this->pdf->Cell($col1W, 4, 'Descrição do Serviço', 0, 0, 'L');
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->Ln(1);
+        $this->pdf->Cell($col1W, 4, 'Descrição do Serviço', 0, 1, 'L');
+
         $descricao = str_replace(
             ["\\r\\n", "\\n", "\\r", "\r\n", "\r"],
             "\n",
             (string)$serv['descricao']
         );
-        $this->pdf->SetXY($col2X, $row2Y);
+        $this->pdf->SetXY($col1X, $startY + 4);
+        $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->MultiCell(
-            $col2W + $col3W + $col4W,
+            $col1W + $col2W + $col3W,
             4,
             $descricao,
             0,
             'L',
             false,
-            1,
-            $col2X,
+            0,
+            $col1X,
             $row2Y,
             true,
             0,
@@ -1074,6 +1069,19 @@ class NfsePdfGenerator
         return $value;
     }
 
+    private function formatNBS($value) {
+        $value = preg_replace('/\D/', '', (string) $value);
+
+        if (strlen($value) === 9) {
+            return substr($value, 0, 1) . '.'
+                . substr($value, 1, 4) . '.'
+                . substr($value, 5, 2) . '.'
+                . substr($value, 7, 2);
+        }
+
+        return $value;
+    }
+
     private function formatDate($value)
     {
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2})/', $value, $matches)) {
@@ -1115,6 +1123,19 @@ class NfsePdfGenerator
         if (strlen($value) == 6) {
             return substr($value, 0, 2) . '.' . substr($value, 2, 2) . '.' . substr($value, 4, 2);
         }
+        return $value;
+    }
+
+    private function formatCodTribMun($value) {
+        $value = preg_replace('/\D/', '', (string) $value);
+
+        if (strlen($value) === 9) {
+            return substr($value, 0, 2) . '.'
+                . substr($value, 2, 2) . '.'
+                . substr($value, 4, 2) . '.'
+                . substr($value, 6, 3);
+        }
+
         return $value;
     }
 }
