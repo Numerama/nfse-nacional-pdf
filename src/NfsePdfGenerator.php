@@ -925,33 +925,9 @@ class NfsePdfGenerator
         $col2W = 60;
         $col3W = 60;
 
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->Cell(0, 4, 'TOTAIS APROXIMADOS DOS TRIBUTOS', 0, 1, 'L');
-        $this->pdf->SetFont('helvetica', '', 8);
-
         $trib = $this->data['tributacao'];
         $startY = $this->pdf->GetY();
 
-        // Header row
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->SetXY($col1X, $startY);
-        $this->pdf->Cell($col1W, 4, 'Federais', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $startY);
-        $this->pdf->Cell($col2W, 4, 'Estaduais', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $startY);
-        $this->pdf->Cell($col3W, 4, 'Municípios', 0, 1, 'L');
-
-        // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->SetXY($col1X, $startY + 4);
-        $this->pdf->Cell($col1W, 4, number_format($trib['totTribFed'], 2, ',', '.') . ' %', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $startY + 4);
-        $this->pdf->Cell($col2W, 4, number_format($trib['totTribEst'], 2, ',', '.') . ' %', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $startY + 4);
-        $this->pdf->Cell($col3W, 4, number_format($trib['totTribMun'], 2, ',', '.') . ' %', 0, 1, 'L');
-        $this->pdf->Ln(5);
-
-        $this->addHorizontalLine();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'INFORMAÇÕES COMPLEMENTARES', 0, 1, 'L');
 
