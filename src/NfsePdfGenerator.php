@@ -177,6 +177,8 @@ class NfsePdfGenerator
                 'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '-',
                 'cLocalidadeIncid' => (string)$infNFSe->IBSCBS->cLocalidadeIncid ?? '-',
                 'xLocalidadeIncid' => (string)$infNFSe->IBSCBS->xLocalidadeIncid ?? '-',
+                'CST' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST ?? '-',
+                'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '-'
             ]
         ];
 
@@ -259,6 +261,9 @@ class NfsePdfGenerator
     private function addHeader()
     {
         $startY = $this->pdf->GetY();
+
+        $this->pdf->SetFillColor(242, 242, 242);
+        $this->pdf->Rect($this->margin, $startY, 210 - (2 * $this->margin), 12, 'F');
 
         // Left column - NFSe logo image (fixed base layout)
         $logoPath = __DIR__ . '/../assets/logo-nfse-assinatura-horizontal.png';
