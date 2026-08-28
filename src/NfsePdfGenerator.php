@@ -407,6 +407,26 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col3X, $row4Y);
         $this->pdf->Cell($col3W, 4, $this->data['dps']['dataEmissao'], 0, 0, 'L');
 
+        $row5Y = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetXY($col1X, $row5Y);
+        $this->pdf->Cell($col1W, 4, 'EMITENTE DA NFS-e', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row5Y);
+        $this->pdf->Cell($col2W, 4, 'SITUAÇÃO DA NFS-e', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row5Y);
+        $this->pdf->Cell($col3W, 4, 'FINALIDADE', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row5Y);
+        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
+
+        $this->pdf->SetFont('helvetica', '', 8);
+        $row6Y =$this->pdf->GetY();;
+        $this->pdf->SetXY($col1X, $row6Y);
+        $this->pdf->Cell($col1W, 4,'Prestador', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row6Y);
+        $this->pdf->Cell($col2W, 4, 'NFS-e Gerada', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row6Y);
+        $this->pdf->Cell($col3W, 4, 'NFS-e regular', 0, 0, 'L');
+
         // Authenticity message positioned in 4th column, below QR code
         $this->pdf->SetXY($col4X, $row4Y);
         $this->pdf->SetFont('helvetica', '', 5);
@@ -437,6 +457,8 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
         $this->pdf->Cell($col1W, 4, 'PRESTADOR / FORNECEDOR', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'CNPJ / CPF / NIF', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
@@ -445,7 +467,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'Telefone', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
@@ -457,7 +479,7 @@ class NfsePdfGenerator
 
         // Header row
         $row2Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row2Y);
         $this->pdf->Cell($col1W, 4, 'Nome / Nome Empresarial', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y);
@@ -468,7 +490,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'Código IBGE / CEP', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, $emit['nome'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
@@ -481,7 +503,7 @@ class NfsePdfGenerator
         $endereco = $emit['logradouro'] . ', ' . $emit['numero'] . ', ' . $emit['bairro'];
         // Header row
         $row3Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row3Y);
         $this->pdf->Cell($col1W, 4, 'Endereço', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row3Y);
@@ -492,7 +514,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'E-mail', 0, 1, 'L');
 
         // Data row — endereço ocupa colunas 1 e 2 (evita sobreposição pela célula vazia)
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row3Y + 4);
         $this->pdf->Cell($col1W + $col2W, 4, $endereco, 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y + 4);
@@ -501,7 +523,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, $emit['email'], 0, 1, 'L');
         $this->pdf->Ln(1);
 
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $opSimpNacMap = [
             '1' => 'Não Optante',
             '2' => 'Optante - Microempreendedor Individual (MEI)',
@@ -518,12 +540,12 @@ class NfsePdfGenerator
         $descricaoRegApTribSN = $regApTribSNMap[$regApTribSN] ?? '-';
 
         $this->pdf->SetXY($col1X, $this->pdf->GetY());
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->Cell($col1W, 4, 'Simples Nacional na Data de Competência', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $this->pdf->GetY());
         $this->pdf->Cell($col3W + $col4W, 4, 'Regime de Apuração Tributária pelo SN', 0, 1, 'L');
         $rowY = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $rowY);
         $this->pdf->Cell($col1W, 4, $descricaoSimplesNacional, 0, 0, 'L');
         $this->pdf->SetXY($col3X, $rowY);
@@ -550,6 +572,8 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
         $this->pdf->Cell($col1W, 4, 'TOMADOR / ADQUIRENTE', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'CNPJ / CPF / NIF', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
@@ -558,7 +582,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'Telefone', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
@@ -570,7 +594,7 @@ class NfsePdfGenerator
 
         // Header row
         $row2Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row2Y);
         $this->pdf->Cell($col1W, 4, 'Nome / Nome Empresarial', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y);
@@ -586,7 +610,7 @@ class NfsePdfGenerator
             $municipioTomador = $toma['municipio'] . ' / ' . $toma['uf'];
         }
 
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, $toma['nome'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
@@ -604,7 +628,7 @@ class NfsePdfGenerator
 
         // Header row
         $row3Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row3Y);
         $this->pdf->Cell($col1W, 4, 'Endereço', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row3Y);
@@ -615,7 +639,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Data row — endereço ocupa colunas 1 e 2 (evita sobreposição pela célula vazia)
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row3Y + 4);
         $this->pdf->Cell($col1W + $col2W, 4, $endereco, 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row3Y + 4);
@@ -647,6 +671,8 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
         $this->pdf->Cell($col1W, 4, 'SERVIÇO PRESTADO', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'Código de Tributação Nacional / Municipal', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
@@ -663,7 +689,7 @@ class NfsePdfGenerator
             $localPrestacao .= ' / ' . $this->data['emitente']['uf'];
         }
 
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->MultiCell(
             $col1W,
@@ -693,7 +719,7 @@ class NfsePdfGenerator
         // Descrição — abaixo do bloco do código nacional (até 3 linhas)
         $row2Y = $dataRowY + $codTribHeight;
         $this->pdf->SetY($row2Y);
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row2Y);
         $this->pdf->Ln(1);
         $this->pdf->Cell($col1W, 4, 'Descrição do Serviço', 0, 1, 'L');
@@ -704,7 +730,7 @@ class NfsePdfGenerator
             (string)$serv['descricao']
         );
         $this->pdf->SetXY($col1X, $startY + 4);
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->MultiCell(
             $col1W + $col2W + $col3W,
             4,
@@ -737,9 +763,6 @@ class NfsePdfGenerator
         $col3W = 50;
         $col4W = 45;
 
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->SetFont('helvetica', '', 8);
-
         $trib = $this->data['tributacao'];
         $val = $this->data['valores'];
         $localIncidencia = $this->data['localIncidencia'];
@@ -758,6 +781,8 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $startY);
         $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO MUNICIPAL (ISSQN)', 0, 1, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'Tipo de Tributação do ISSQN', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $startY);
@@ -766,7 +791,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
@@ -778,7 +803,7 @@ class NfsePdfGenerator
 
         // Header row
         $row2Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row2Y);
         $this->pdf->Cell($col1W, 4, 'BC ISSQN', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y);
@@ -789,7 +814,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'ISSQN Apurado', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '',6);
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, $val['bcIssqn'] > 0 ? 'R$ ' . number_format($val['bcIssqn'], 2, ',', '.') : '-', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
@@ -807,7 +832,9 @@ class NfsePdfGenerator
         $row5Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row5Y);
-        $this->pdf->Cell($col1W, 4, 'TRIBUTAÇÃO FEDERAL (EXCETO CBS)', 0, 1, 'L');
+        $this->pdf->Cell($col1W, 4, 'TRIBUTAÇÃO FEDERAL', 0, 1, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col2X, $row5Y);
         $this->pdf->Cell($col2W, 4, 'IRRF', 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row5Y);
@@ -816,7 +843,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, 'Contribuições Sociais - Retidas', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row5Y + 4);
         $this->pdf->Cell($col1W, 4, '', 0, 1, 'L');
         $this->pdf->SetXY($col2X, $row5Y + 4);
@@ -828,7 +855,7 @@ class NfsePdfGenerator
 
         // Header row
         $row6Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col1X, $row6Y);
         $this->pdf->Cell($col1W, 4, 'PIS - Débito Apuração Própria', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row6Y);
@@ -839,7 +866,7 @@ class NfsePdfGenerator
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row6Y + 4);
         $this->pdf->Cell($col1W, 4, $trib['vPis'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row6Y + 4);
@@ -848,6 +875,103 @@ class NfsePdfGenerator
         $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row6Y + 4);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
+        $this->pdf->Ln(2);
+
+        $this->addHorizontalLine();
+
+        // Header row
+        $row7Y = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetXY($col1X, $row7Y);
+        $this->pdf->Cell(0, 4, 'TRIBUTAÇÃO IBS/CBS', 0, 1, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
+        $this->pdf->SetXY($col2X, $row7Y);
+        $this->pdf->Cell($col2W, 4, 'CST / cClassTrib', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row7Y);
+        $this->pdf->Cell($col3W, 4, 'Indicador de Operação / Código IBGE Incidência / Município Incidência / Sigla UF', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row7Y);
+        $this->pdf->Cell($col4W, 4, '', 0, 0, 'L');
+
+        // Data row
+        $this->pdf->SetFont('helvetica', '', 6);
+        $this->pdf->SetXY($col1X, $row7Y + 4);
+        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row7Y + 4);
+        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row7Y + 4);
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row7Y + 4);
+        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+
+        // Header row
+        $row8Y = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', 'B', 6);
+        $this->pdf->SetXY($col1X, $row8Y);
+        $this->pdf->Cell($col1W, 4, 'Exclusões e Red. da Base de Cálculo', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row8Y);
+        $this->pdf->Cell($col2W, 4, 'Base de Cálculo Após Exclusões e Reduções', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row8Y);
+        $this->pdf->Cell($col3W, 4, 'Red. Alíquota IBS / Red. Alíquota CBS', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row8Y);
+        $this->pdf->Cell($col4W, 4, 'Alíquota - IBS UF / IBS Mun', 0, 1, 'L');
+
+        // Data row
+        $this->pdf->SetFont('helvetica', '', 6);
+        $this->pdf->SetXY($col1X, $row8Y + 4);
+        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row8Y + 4);
+        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row8Y + 4);
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row8Y + 4);
+        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+
+        // Header row
+        $row9Y = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', 'B', 6);
+        $this->pdf->SetXY($col1X, $row9Y);
+        $this->pdf->Cell($col1W, 4, 'Aliq. Efetiva Municipal - IBS', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row9Y);
+        $this->pdf->Cell($col2W, 4, 'Valor Apurado Municipal - IBS', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row9Y);
+        $this->pdf->Cell($col3W, 4, 'Alíq. Efetiva Estadual - IBS', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row9Y);
+        $this->pdf->Cell($col4W, 4, 'Valor Apurado Estadual - IBS', 0, 1, 'L');
+
+        // Data row
+        $this->pdf->SetFont('helvetica', '', 6);
+        $this->pdf->SetXY($col1X, $row9Y + 4);
+        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row9Y + 4);
+        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row9Y + 4);
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row9Y + 4);
+        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+
+        // Header row
+        $row10Y = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', 'B', 6);
+        $this->pdf->SetXY($col1X, $row10Y);
+        $this->pdf->Cell($col1W, 4, 'Valor Total Apurado - IBS', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row10Y);
+        $this->pdf->Cell($col2W, 4, 'Alíquota - CBS', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row10Y);
+        $this->pdf->Cell($col3W, 4, 'Alíquota Efetiva - CBS', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row10Y);
+        $this->pdf->Cell($col4W, 4, 'Valor Total Apurado - CBS', 0, 1, 'L');
+
+        // Data row
+        $this->pdf->SetFont('helvetica', '', 6);
+        $this->pdf->SetXY($col1X, $row10Y + 4);
+        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row10Y + 4);
+        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row10Y + 4);
+        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->SetXY($col4X, $row10Y + 4);
+        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
         $this->pdf->Ln(2);
     }
 
@@ -875,17 +999,21 @@ class NfsePdfGenerator
         $this->pdf->Cell(0, 4, 'VALOR TOTAL DA NFS-E', 0, 1, 'L');
         $this->pdf->SetXY($col2X, $startY);
         $this->pdf->Cell($col2W, 4, 'VALOR DA OPERAÇÃO / SERVIÇO', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col3X, $startY);
         $this->pdf->Cell($col3W, 4, 'Desconto Incondicionado', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY);
         $this->pdf->Cell($col4W, 4, 'Desconto Condicionado', 0, 0, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 7);
         $this->pdf->SetXY($col1X, $startY + 4);
         $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $startY + 4);
         $this->pdf->Cell($col2W, 4, 'R$ ' . number_format($val['valorServico'], 2, ',', '.'), 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col3X, $startY + 4);
         $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY + 4);
@@ -896,22 +1024,29 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row2Y);
         $this->pdf->Cell($col1W, 4, 'Total das Retenções (ISSQN / Federais)', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col2X, $row2Y);
-        $this->pdf->Cell($col2W, 4, 'VALOR LÍQUIDO DA NFS-e', 0, 0, 'C');
+        $this->pdf->Cell($col2W, 4, 'VALOR LÍQUIDO DA NFS-e', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col3X, $row2Y);
         $this->pdf->Cell($col3W, 4, 'Total do IBS/CBS', 0, 0, 'L');
+
+        $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col4X, $row2Y);
         $this->pdf->Cell($col4W, 4, 'VALOR LÍQUIDO DA NFS-e + IBS/CBS', 0, 1, 'L');
 
         // Data row
-        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row2Y + 4);
         $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
-        $this->pdf->SetFont('helvetica', 'B', 8);
+
+        $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col4X, $row2Y + 4);
         $this->pdf->Cell($col4W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 1, 'L');
     }
