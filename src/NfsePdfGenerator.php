@@ -729,8 +729,10 @@ class NfsePdfGenerator
             "\n",
             (string)$serv['descricao']
         );
-        $this->pdf->SetXY($col1X, $startY + 4);
+
+        $rowY = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', '', 6);
+        $this->pdf->SetXY($col1X, $rowY);
         $this->pdf->MultiCell(
             $col1W + $col2W + $col3W,
             4,
@@ -740,7 +742,7 @@ class NfsePdfGenerator
             false,
             0,
             $col1X,
-            $row2Y,
+            $rowY,
             true,
             0,
             false,
@@ -750,6 +752,7 @@ class NfsePdfGenerator
             false
         );
         $this->pdf->SetY(max($this->pdf->GetY(), $row2Y + 4) + 2);
+        $this->pdf->Ln(2);
     }
 
     private function addTributacao()
