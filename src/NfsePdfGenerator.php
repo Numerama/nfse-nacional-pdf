@@ -104,6 +104,10 @@ class NfsePdfGenerator
             'tribNac' => (string)$infNFSe->xTribNac,
             'dataProcessamento' => $this->formatDateTime((string)$infNFSe->dhProc),
             'numeroDFSe' => (string)$infNFSe->nDFSe,
+            'tpEmit' => (string) $dps->tpEmit,
+            'cStat' => (string) $infNFSe->cStat,
+            'ambGer' => (string) $infNFSe->ambGer,
+            'tpAmb' => (string) $dps->tpAmb,
             'emitente' => [
                 'cnpj' => $this->formatCnpjCpf((string)$infNFSe->emit->CNPJ),
                 'nome' => (string)$infNFSe->emit->xNome,
@@ -407,35 +411,32 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col3X, $row4Y);
         $this->pdf->Cell($col3W, 4, $this->data['dps']['dataEmissao'], 0, 0, 'L');
 
-        $row5Y = $this->pdf->GetY();
-        $this->pdf->SetFont('helvetica', 'B', 7);
-        $this->pdf->SetXY($col1X, $row5Y);
-        $this->pdf->Cell($col1W, 4, 'EMITENTE DA NFS-e', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row5Y);
-        $this->pdf->Cell($col2W, 4, 'SITUAÇÃO DA NFS-e', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row5Y);
-        $this->pdf->Cell($col3W, 4, 'FINALIDADE', 0, 0, 'L');
-        $this->pdf->SetXY($col4X, $row5Y);
-        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
-
-        $this->pdf->SetFont('helvetica', '', 8);
-        $row6Y =$this->pdf->GetY();;
-        $this->pdf->SetXY($col1X, $row6Y);
-        $this->pdf->Cell($col1W, 4,'Prestador', 0, 0, 'L');
-        $this->pdf->SetXY($col2X, $row6Y);
-        $this->pdf->Cell($col2W, 4, 'NFS-e Gerada', 0, 0, 'L');
-        $this->pdf->SetXY($col3X, $row6Y);
-        $this->pdf->Cell($col3W, 4, 'NFS-e regular', 0, 0, 'L');
-
         // Authenticity message positioned in 4th column, below QR code
         $this->pdf->SetXY($col4X, $row4Y);
         $this->pdf->SetFont('helvetica', '', 5);
         $message = 'A autenticidade desta NFS-e pode ser verificada pela leitura deste código QR ou pela consulta da chave de acesso no portal nacional da NFS-e';
         $this->pdf->MultiCell($col4W - 1, 1, $message, 0, 'L', false, 1, $col4X+5, $row4Y-4);
-        $messageEndY = $this->pdf->GetY();
 
-        // Move Y position after QR code area (use the maximum of message end or QR code end)
-        $this->pdf->SetY(max($row1Y + $qrSize, $messageEndY) + 2);
+        // Fifth row - Emitente da NFS-e / Situação da NFS-e / Finalidade
+        $row5Y = $row4Y + 4;
+        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetXY($col1X, $row5Y);
+        $this->pdf->Cell($col1W, 4, 'EMITENTE DA NFS-E', 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row5Y);
+        $this->pdf->Cell($col2W, 4, 'SITUAÇÃO DA NFS-E', 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row5Y);
+        $this->pdf->Cell($col3W, 4, 'FINALIDADE', 0, 1, 'L');
+
+        // Sixth row - data
+        $this->pdf->SetFont('helvetica', '', 8);
+        $row6Y = $row5Y + 4;
+        $this->pdf->SetXY($col1X, $row6Y);
+        $this->pdf->Cell($col1W, 4, $this->emitenteNFSe($this->data['tpEmit']), 0, 0, 'L');
+        $this->pdf->SetXY($col2X, $row6Y);
+        $this->pdf->Cell($col2W, 4, $this->situacaoNFSe($this->data['cStat']), 0, 0, 'L');
+        $this->pdf->SetXY($col3X, $row6Y);
+        $this->pdf->Cell($col3W, 4, 'NFS-e regular', 0, 1, 'L');
+
         $this->pdf->Ln(1);
     }
 
@@ -905,7 +906,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col3X, $row7Y + 4);
         $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row7Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
         // Header row
         $row8Y = $this->pdf->GetY();
@@ -1197,5 +1198,36 @@ class NfsePdfGenerator
         }
 
         return $value;
+    }
+
+    private function emitenteNFSe($cTpEmit): string {
+        // NFSe/infNFSe/DPS/infDPS/tpEmit
+        // 1 - Prestador; 2 - Tomador; 3 - Intermediário;
+        $tpEmit = ['1' => 'Prestador', '2' => 'Tomador', '3' => 'Intermediário'];
+
+        return $tpEmit[$cTpEmit] ?? ($cTpEmit !== '' ? "tpEmit $cTpEmit" : '-');
+    }
+
+    private function situacaoNFSe($cStat): string {
+        // NFSe/infNFSe/cStat
+        $cStat = (string) $cStat;
+        $situacoes = [
+            '100' => 'Autorizado o uso da NF-e',
+            '101' => 'Cancelamento homologado',
+            '102' => 'Inutilização homologada',
+            '110' => 'Uso denegado',
+            '150' => 'Autorizado fora do prazo',
+            '301' => 'Uso denegado',
+            '302' => 'Uso denegado',
+        ];
+
+        return $situacoes[$cStat] ?? ($cStat !== '' ? "cStat $cStat" : '-');
+    }
+
+    private function finalidadeNFSe($cFinNFSe): string {
+        // NFSe/infNFSe/DPS/infDPS/IBSCBS/finNFSe
+        $finNFSe = ['0' => 'NFS-e regular'];
+
+        return $finNFSe[$cFinNFSe] ?? ($cFinNFSe !== '' ? "finNFSe $cFinNFSe" : '-');
     }
 }
