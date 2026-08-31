@@ -655,6 +655,10 @@ class NfsePdfGenerator
         $this->pdf->Ln(2);
 
         $this->pdf->SetFont('helvetica', '', 7);
+
+        $this->addHorizontalLine(false);
+        $this->pdf->Cell(0, 4, 'DESTINATÁRIO DA OPERAÇÃO NÃO IDENTIFICADO NA NFS-e', 0, 1, 'C');
+
         $this->addHorizontalLine(false);
         $this->pdf->Cell(0, 4, 'INTERMEDIÁRIO DO SERVIÇO NÃO IDENTIFICADO NA NFS-e', 0, 1, 'C');
     }
@@ -905,7 +909,7 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row7Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row7Y + 4);
         $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row7Y + 4);
@@ -1077,6 +1081,10 @@ class NfsePdfGenerator
 
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->MultiCell(0, 4, $this->data['servico']['infoComplementar'], 0, 'L', false, 1);
+
+
+
+
     }
 
     private function addTableRowWithBorders($headers, $data, $widths)
@@ -1217,9 +1225,11 @@ class NfsePdfGenerator
         // NFSe/infNFSe/cStat
         $cStat = (string) $cStat;
         $situacoes = [
-            '100' => 'Autorizado o uso da NF-e',
+            '100' => 'NFS-e Gerada',
             '101' => 'Cancelamento homologado',
-            '102' => 'Inutilização homologada',
+            '102' => 'NFS-e de Decisão Judicial ou Administrativa',
+            '103' => 'NFS-e Avulsa',
+            '107' => 'NFS-e MEI',
             '110' => 'Uso denegado',
             '150' => 'Autorizado fora do prazo',
             '301' => 'Uso denegado',
