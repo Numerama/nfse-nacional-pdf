@@ -158,7 +158,7 @@ class NfsePdfGenerator
                 'competencia' => $this->formatDate((string)$dps->dCompet),
                 'dataEmissao' => $this->formatDateTime((string)$dps->dhEmi),
             ],
-            'tributacao' => array(
+            'tributacao' => [
                 'tribISSQN' => (string)$dps->valores->trib->tribMun->tribISSQN,
                 'tpRetISSQN' => (string)$dps->valores->trib->tribMun->tpRetISSQN,
                 'totTribFed' => (float)$dps->valores->trib->totTrib->pTotTrib->pTotTribFed,
@@ -170,15 +170,24 @@ class NfsePdfGenerator
                 'vRetCSLL' => (string)$dps->valores->trib->tribFed->vRetCSLL ?? '-',
                 'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? (float) $dps->valores->trib->tribFed->piscofins->vPis : '-',
                 'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? (float) $dps->valores->trib->tribFed->piscofins->vCofins : '-',
-            ),
+            ],
             'IbsCbs' => [
                 'cIndOp' => (string)$dps->IBSCBS->cIndOp ?? '-',
-                'CST' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST ?? '-',
-                'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '-',
-                'cLocalidadeIncid' => (string)$infNFSe->IBSCBS->cLocalidadeIncid ?? '-',
-                'xLocalidadeIncid' => (string)$infNFSe->IBSCBS->xLocalidadeIncid ?? '-',
-                'CST' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST ?? '-',
-                'cClassTrib' => (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib ?? '-'
+                'CST' => isset($dps->IBSCBS->valores->trib) ? (string)$dps->IBSCBS->valores->trib->gIBSCBS->CST : '-',
+                'cClassTrib' => isset($dps->IBSCBS->valores) ? (string)$dps->IBSCBS->valores->trib->gIBSCBS->cClassTrib : '-',
+                'cLocalidadeIncid' => isset($dps->IBSCBS) ? (string)$infNFSe->IBSCBS->cLocalidadeIncid : '-',
+                'xLocalidadeIncid' => isset($dps->IBSCBS) ? (string)$infNFSe->IBSCBS->xLocalidadeIncid : '-',
+                'vBC' => isset($dps->IBSCBS) ? 'R$ ' . number_format((float)$infNFSe->IBSCBS->valores->vBC, 2, ',', '.') : '-',
+                'pIBSUF' => isset($dps->IBSCBS) ? number_format((float)$infNFSe->IBSCBS->valores->uf->pIBSUF, 2, ',', '.') . ' %' : '-',
+                'pIBSMun' => isset($dps->IBSCBS) ? number_format((float)$infNFSe->IBSCBS->valores->mun->pIBSMun, 2, ',', '.') . ' %' : '-',
+                'pAliqEfetMun' => isset($dps->IBSCBS) ? number_format((float)$infNFSe->IBSCBS->valores->mun->pAliqEfetMun, 2, ',', '.') . ' %' : '-',
+                'vIBSMun' => isset($dps->IBSCBS) ? 'R$ ' . number_format((float)$infNFSe->IBSCBS->totCIBS->gIBS->gIBSMunTot->vIBSMun, 2, ',', '.') : '-',
+                'pAliqEfetUF' => isset($dps->IBSCBS) ? number_format((float)$infNFSe->IBSCBS->valores->uf->pAliqEfetUF, 2, ',', '.') . ' %' : '-',
+                'vIBSTot' => isset($dps->IBSCBS) ? 'R$ ' . number_format((float)$infNFSe->IBSCBS->totCIBS->gIBS->vIBSTot, 2, ',', '.') : '-',
+                'pCBS' => isset($dps->IBSCBS) ? number_format((float)$infNFSe->IBSCBS->valores->fed->pCBS, 2, ',', '.') . ' %' : '-',
+                'pAliqEfetCBS' => isset($dps->IBSCBS) ? number_format((float)$infNFSe->IBSCBS->valores->fed->pAliqEfetCBS, 2, ',', '.') . ' %' : '-',
+                'vCBS' => isset($dps->IBSCBS) ? 'R$ ' . number_format((float)$infNFSe->IBSCBS->totCIBS->gCBS->vCBS, 2, ',', '.') : '-',
+                'vTotIBSCBS' => isset($dps->IBSCBS) ? 'R$ ' . number_format((float)$infNFSe->IBSCBS->totCIBS->gIBS->vIBSTot + (float)$infNFSe->IBSCBS->totCIBS->gCBS->vCBS, 2, ',', '.') : '-',
             ]
         ];
 
@@ -893,6 +902,7 @@ class NfsePdfGenerator
         $this->addHorizontalLine();
 
         // Header row
+        $tribIBSCBS = $this->data['IbsCbs'];
         $row7Y = $this->pdf->GetY();
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col1X, $row7Y);
@@ -911,9 +921,9 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col1X, $row7Y + 4);
         $this->pdf->Cell($col1W, 4, '', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row7Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $tribIBSCBS['CST'] . ' / ' . $tribIBSCBS['cClassTrib'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row7Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $tribIBSCBS['cIndOp'] . ' / ' . $tribIBSCBS['cLocalidadeIncid'] . ' / ' . $tribIBSCBS['xLocalidadeIncid'] . ' / ' . $this->data['emitente']['uf'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row7Y + 4);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
 
@@ -932,13 +942,13 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row8Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, 'R$ 0,00', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row8Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4,  $tribIBSCBS['vBC'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row8Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, '- / - / -', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row8Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $tribIBSCBS['pIBSUF'] . ' / ' . $tribIBSCBS['pIBSMun'], 0, 1, 'L');
 
         // Header row
         $row9Y = $this->pdf->GetY();
@@ -955,13 +965,13 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row9Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, $tribIBSCBS['pAliqEfetMun'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row9Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $tribIBSCBS['vIBSMun'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row9Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $tribIBSCBS['pAliqEfetUF'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row9Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $tribIBSCBS['vIBSTot'], 0, 1, 'L');
 
         // Header row
         $row10Y = $this->pdf->GetY();
@@ -978,13 +988,13 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row10Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, $tribIBSCBS['vIBSTot'], 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row10Y + 4);
-        $this->pdf->Cell($col2W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $tribIBSCBS['pCBS'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row10Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $tribIBSCBS['pAliqEfetCBS'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row10Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $tribIBSCBS['vCBS'], 0, 1, 'L');
         $this->pdf->Ln(2);
     }
 
@@ -1057,7 +1067,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $this->data['IbsCbs']['vTotIBSCBS'], 0, 0, 'L');
 
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetXY($col4X, $row2Y + 4);
@@ -1081,10 +1091,9 @@ class NfsePdfGenerator
 
         $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->MultiCell(0, 4, $this->data['servico']['infoComplementar'], 0, 'L', false, 1);
+        $this->pdf->Ln(2);
 
-
-
-
+        // Canhoto
     }
 
     private function addTableRowWithBorders($headers, $data, $widths)
