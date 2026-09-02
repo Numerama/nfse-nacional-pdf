@@ -161,9 +161,9 @@ class NfsePdfGenerator
             'tributacao' => [
                 'tribISSQN' => (string)$dps->valores->trib->tribMun->tribISSQN,
                 'tpRetISSQN' => (string)$dps->valores->trib->tribMun->tpRetISSQN,
-                'totTribFed' => (float)$dps->valores->trib->totTrib->pTotTrib->pTotTribFed,
-                'totTribEst' => (float)$dps->valores->trib->totTrib->pTotTrib->pTotTribEst,
-                'totTribMun' => (float)$dps->valores->trib->totTrib->pTotTrib->pTotTribMun,
+                'pTotTribFed' => isset($dps->valores->trib->totTrib->pTotTrib) ? number_format((float)$dps->valores->trib->totTrib->pTotTrib->pTotTribFed, 2, ',', '.') : '0,00',
+                'pTotTribEst' => isset($dps->valores->trib->totTrib->pTotTrib) ? number_format((float)$dps->valores->trib->totTrib->pTotTrib->pTotTribEst, 2, ',', '.') : '0,00',
+                'pTotTribMun' => isset($dps->valores->trib->totTrib->pTotTrib) ? number_format((float)$dps->valores->trib->totTrib->pTotTrib->pTotTribMun, 2, ',', '.') : '0,00',
                 'opSimpNac' => $opSimpNac,
                 'regApTribSN' => $regApTribSN,
                 'vRetIRRF' => (string)$dps->valores->trib->tribFed->vRetIRRF ?? '-',
@@ -213,6 +213,7 @@ class NfsePdfGenerator
         $this->addValores();
         $this->addHorizontalLine();
         $this->addTotaisTributos();
+        $this->addCanhoto();
 
         // Draw border around the entire document after all content is added
         // This ensures it encompasses everything including "INFORMAÇÕES COMPLEMENTARES"
@@ -295,31 +296,19 @@ class NfsePdfGenerator
         $logoWidth     = 12;
         $gap           = 2;
         $textBlockWidth = $blockWidth - $logoWidth - $gap;
-
-        // Municipality SVG logo on the left of the text block
-        if (!empty($this->logoSvg)) {
-            // TCPDF: '@' prefix means raw SVG content
-            $logoX = $rightX; // left edge of the right header block
-            $this->pdf->Image($this->logoSvg, $logoX +3, $startY, $logoWidth -2, '', 'PNG', '', '', false, 300, '', false, false, 0, false, false, false);
-        }
-
-        // Text block to the RIGHT of the SVG logo
         $textX = $rightX + $logoWidth + $gap;
-        $municipalityLine = $this->headerInfo['municipalityLine'] ?? ('Pref. Mun. de ' . $this->data['localEmissao']);
-        $secretariatLine  = $this->headerInfo['secretariatLine']  ?? 'Secretaria Municipal da Fazenda';
-        $phoneLine        = $this->headerInfo['phoneLine']        ?? '(48)3431-0074';
-        $emailLine        = $this->headerInfo['emailLine']        ?? 'tributos@criciuma.sc.gov.br';
+        $municipioUf = $this->data['localEmissao'] . ' - ' . ($this->data['emitente']['uf'] ?? '');
+        $rowMunicipalityY = $startY;
+        $col4X = 147;
 
-        $this->pdf->SetXY($textX, $startY);
+        $this->pdf->SetXY($col4X, $startY);
         $this->pdf->SetFont('helvetica', 'B', 8);
-        $this->pdf->Cell($textBlockWidth, 3, $municipalityLine, 0, 1, 'L');
-        $this->pdf->SetXY($textX, $startY + 3);
+        $this->pdf->Cell(57, 4, 'Município: ' . $municipioUf, 0, 1, 'L');
+        $this->pdf->SetXY($col4X, $rowMunicipalityY += 3.5);
         $this->pdf->SetFont('helvetica', '', 6);
-        $this->pdf->Cell($textBlockWidth, 2.5, $secretariatLine, 0, 1, 'L');
-        $this->pdf->SetXY($textX, $startY + 5.5);
-        $this->pdf->Cell($textBlockWidth, 2.5, $phoneLine, 0, 1, 'L');
-        $this->pdf->SetXY($textX, $startY + 8);
-        $this->pdf->Cell($textBlockWidth, 2.5, $emailLine, 0, 1, 'L');
+        $this->pdf->Cell(57, 4, 'Ambiente Gerador: ' . $this->ambienteGerador($this->data['ambGer']), 0, 1, 'L');
+        $this->pdf->SetXY($col4X, $rowMunicipalityY += 3.5);
+        $this->pdf->Cell(57, 4, 'Tipo de Ambiente: ' . $this->tipoAmbiente($this->data['tpAmb']), 0, 1, 'L');
 
         // Move Y position down for next content
         $this->pdf->SetY($startY + 12);
@@ -1088,27 +1077,49 @@ class NfsePdfGenerator
 
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->Cell(0, 4, 'INFORMAÇÕES COMPLEMENTARES', 0, 1, 'L');
+        $this->pdf->Ln(3);
 
         $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->SetXY(0, 4);
+        $this->pdf->Cell(0, 4, 'Totais aproximados dos Tributos cfe. Lei n° 12.741/2012: Federais: R$ ' . $trib['pTotTribFed'] . '; Estaduais: R$ ' . $trib['pTotTribEst'] . '; Municipais: R$ ' . $trib['pTotTribMun'] . ';', 0, 1, 'L');
+        $this->pdf->Ln(1);
         $this->pdf->MultiCell(0, 4, $this->data['servico']['infoComplementar'], 0, 'L', false, 1);
         $this->pdf->Ln(2);
-
-        // Canhoto
     }
 
-    private function addTableRowWithBorders($headers, $data, $widths)
+    private function addCanhoto(): void
     {
-        $this->pdf->SetFont('helvetica', 'B', 8);
-        for ($i = 0; $i < count($headers); $i++) {
-            $this->pdf->Cell($widths[$i], 5, $headers[$i], 0, 0, 'L');
-        }
-        $this->pdf->Ln();
+        $x = $this->margin;
+        $wTotal = 210 - (2 * $this->margin);
+        $w1 = 55;
+        $w2 = 70;
+        $w3 = $wTotal - ($w1 + $w2);
 
-        $this->pdf->SetFont('helvetica', '', 8);
-        for ($i = 0; $i < count($data); $i++) {
-            $this->pdf->Cell($widths[$i], 5, $data[$i], 0, 0, 'L');
-        }
-        $this->pdf->Ln();
+        $hHead = 5; // altura do cabecalho
+        $hBody = 8; // altura da linha de conteudo
+
+        $this->pdf->Ln(22);
+
+        // CABECALHO
+        $this->pdf->SetFont('helvetica', 'B', 7);
+        $this->pdf->SetX($x);
+        $this->pdf->Cell($w1, $hHead, 'DATA CIENTIFICACAO:', 1, 0, 'L');
+        $this->pdf->Cell($w2, $hHead, 'IDENTIFICACAO E ASSINATURA', 1, 0, 'L');
+        $this->pdf->Cell($w3, $hHead, 'N° NFS-e / CHAVE NFS-e', 1, 1, 'L');
+
+        $y = $this->pdf->GetY();
+        $this->pdf->SetFont('helvetica', '', 6);
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell($w1, $hBody / 2, '', 1, 0, 'L');
+        $this->pdf->SetXY($x + $w1, $y);
+        $this->pdf->Cell($w2, $hBody, '', 1, 0, 'L');
+
+        $infoUltimaColuna = ($this->data['numeroNfse'] ?? '-') . ' / ' . ($this->data['chaveAcesso'] ?? '-');
+        $this->pdf->MultiCell($w3, $hBody / 2, $infoUltimaColuna, 1, 'L', false, 1, $x + $w1 + $w2, $y, true);
+
+        $this->pdf->SetY(max($this->pdf->GetY(), $y + $hBody));
+        $this->pdf->Ln(1);
     }
 
     private function formatCnpjCpf($value)
@@ -1253,5 +1264,15 @@ class NfsePdfGenerator
         $finNFSe = ['0' => 'NFS-e regular'];
 
         return $finNFSe[$cFinNFSe] ?? ($cFinNFSe !== '' ? "finNFSe $cFinNFSe" : '-');
+    }
+
+    private function ambienteGerador($cAmbGer): string {
+        $ambGer = ['1' => 'Sistema Próprio do Município', '2' => 'SEFIM Nacional'];
+        return $ambGer[$cAmbGer] ?? ($cAmbGer !== '' ? "ambGer $cAmbGer" : '-');
+    }
+
+    private function tipoAmbiente($cTpAmb): string {
+        $tpAmb = ['1' => 'Produção', '2' => 'Homologação'];
+        return $tpAmb[$cTpAmb] ?? ($cTpAmb !== '' ? "tpAmb $cTpAmb" : '-');
     }
 }
