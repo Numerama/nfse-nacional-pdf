@@ -933,7 +933,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col1X, $row8Y + 4);
         $this->pdf->Cell($col1W, 4, 'R$ 0,00', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row8Y + 4);
-        $this->pdf->Cell($col2W, 4,  $tribIBSCBS['vBC'], 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $tribIBSCBS['vBC'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row8Y + 4);
         $this->pdf->Cell($col3W, 4, '- / - / -', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row8Y + 4);
@@ -1103,8 +1103,8 @@ class NfsePdfGenerator
         // CABECALHO
         $this->pdf->SetFont('helvetica', 'B', 7);
         $this->pdf->SetX($x);
-        $this->pdf->Cell($w1, $hHead, 'DATA CIENTIFICACAO:', 1, 0, 'L');
-        $this->pdf->Cell($w2, $hHead, 'IDENTIFICACAO E ASSINATURA', 1, 0, 'L');
+        $this->pdf->Cell($w1, $hHead, 'DATA CIENTIFICAÇÃO:', 1, 0, 'L');
+        $this->pdf->Cell($w2, $hHead, 'IDENTIFICAÇÃO E ASSINATURA', 1, 0, 'L');
         $this->pdf->Cell($w3, $hHead, 'N° NFS-e / CHAVE NFS-e', 1, 1, 'L');
 
         $y = $this->pdf->GetY();
