@@ -170,6 +170,8 @@ class NfsePdfGenerator
                 'vRetCSLL' => (string)$dps->valores->trib->tribFed->vRetCSLL ?? '-',
                 'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? (float) $dps->valores->trib->tribFed->piscofins->vPis : '-',
                 'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? (float) $dps->valores->trib->tribFed->piscofins->vCofins : '-',
+                'tipoRetencaoISSQN' => $this->tipoRetencaoISSQN((string) $dps->valores->trib->tribMun->tpRetISSQN),
+                'tipoRetencaoPisCofins' => $this->retencaoPisCofins(isset($dps->valores->trib->tribFed->piscofins->tpRetPisCofins) ? (string) $dps->valores->trib->tribFed->piscofins->tpRetPisCofins : '')
             ],
             'IbsCbs' => [
                 'cIndOp' => (string)$dps->IBSCBS->cIndOp ?? '-',
@@ -829,15 +831,13 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col1X, $row2Y + 4);
         $this->pdf->Cell($col1W, 4, $val['bcIssqn'] > 0 ? 'R$ ' . number_format($val['bcIssqn'], 2, ',', '.') : '-', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
-        $this->pdf->Cell($col2W, 4, $val['aliqAplicada'] > 0 ? number_format($val['aliqAplicada'], 2, ',', '.') . '%' : '-', 0, 0, 'L');
+        $this->pdf->Cell($col2W, 4, $val['aliqAplicada'] > 0 ? number_format($val['aliqAplicada'], 2, ',', '.') . ' %' : '-', 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row2Y + 4);
-        $this->pdf->Cell($col3W, 4, $retencaoIssqn, 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $trib['tipoRetencaoISSQN'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row2Y + 4);
         $this->pdf->Cell($col4W, 4, $val['issqnApurado'] > 0 ? 'R$ ' . number_format($val['issqnApurado'], 2, ',', '.') : '-', 0, 1, 'L');
 
         $this->addHorizontalLine();
-
-        $trib = $this->data['tributacao'];
 
         // Header row
         $row5Y = $this->pdf->GetY();
@@ -883,7 +883,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row6Y + 4);
         $this->pdf->Cell($col2W, 4, $trib['vCofins'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row6Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $trib['tipoRetencaoPisCofins'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row6Y + 4);
         $this->pdf->Cell($col4W, 4, '', 0, 1, 'L');
         $this->pdf->Ln(2);
@@ -1274,5 +1274,66 @@ class NfsePdfGenerator
     private function tipoAmbiente($cTpAmb): string {
         $tpAmb = ['1' => 'Produção', '2' => 'Homologação'];
         return $tpAmb[$cTpAmb] ?? ($cTpAmb !== '' ? "tpAmb $cTpAmb" : '-');
+    }
+
+    private function tipoRetencaoISSQN($cTpRetISSQN): string {
+        // Tipo de retencao do ISSQN:
+        // 1 - Não Retido;
+        // 2 - Retido pelo Tomador;
+        // 3 - Retido pelo Intermediario;
+
+        $tpRetISSQN = '-';
+        if (is_numeric($cTpRetISSQN)) {
+            if ($cTpRetISSQN == 1) {
+                $tpRetISSQN = 'Não Retido';
+            } elseif ($cTpRetISSQN == 2) {
+                $tpRetISSQN = 'Retido pelo Tomador';
+            } elseif ($cTpRetISSQN == 3) {
+                $tpRetISSQN = 'Retido pelo Intermediario';
+            }
+        }
+
+        return $tpRetISSQN;
+    }
+
+    private function retencaoPisCofins($cTpRetPisCofins): string {
+        // Tipo de retenção ao do PIS/COFINS:
+        // 0 - PIS/COFINS/CSLL Não Retidos
+        // 1 - PIS/COFINS Retido
+        // 2 - PIS/COFINS Não Retido
+        // 3 - PIS/COFINS/CSLL Retidos
+        // 4 - PIS/COFINS Retidos, CSLL Não Retido
+        // 5 - PIS Retido, COFINS/CSLL Não Retido
+        // 6 - COFINS Retido, PIS/CSLL Não Retido
+        // 7 - PIS Não Retido, COFINS/CSLL Retidos
+        // 8 - PIS/COFINS Não Retidos, CSLL Retido
+        // 9 - COFINS Não Retido, PIS/CSLL Retidos
+
+        $tpRetPisCofins = '-';
+        if (is_numeric($cTpRetPisCofins)) {
+            if ($cTpRetPisCofins == 0) {
+                $tpRetPisCofins = '0 - PIS/COFINS/CSLL Não Retidos';
+            } elseif ($cTpRetPisCofins == 1) {
+                $tpRetPisCofins = '1 - PIS/COFINS Retido';
+            } elseif ($cTpRetPisCofins == 2) {
+                $tpRetPisCofins = '2 - PIS/COFINS Não Retido';
+            } elseif ($cTpRetPisCofins == 3) {
+                $tpRetPisCofins = '3 - PIS/COFINS/CSLL Retidos';
+            } elseif ($cTpRetPisCofins == 4) {
+                $tpRetPisCofins = '4 - PIS/COFINS Retidos, CSLL Não Retido';
+            } elseif ($cTpRetPisCofins == 5) {
+                $tpRetPisCofins = '5 - PIS Retido, COFINS/CSLL Não Retido';
+            } elseif ($cTpRetPisCofins == 6) {
+                $tpRetPisCofins = '6 - COFINS Retido, PIS/CSLL Não Retido';
+            } elseif ($cTpRetPisCofins == 7) {
+                $tpRetPisCofins = '7 - PIS Não Retido, COFINS/CSLL Retidos';
+            } elseif ($cTpRetPisCofins == 8) {
+                $tpRetPisCofins = '8 - PIS/COFINS Não Retidos, CSLL Retido';
+            } elseif ($cTpRetPisCofins == 9) {
+                $tpRetPisCofins = '9 - COFINS Não Retido, PIS/CSLL Retidos';
+            }
+        }
+
+        return $tpRetPisCofins;
     }
 }
