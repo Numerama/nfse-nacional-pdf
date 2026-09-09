@@ -147,7 +147,7 @@ class NfsePdfGenerator
             'valores' => [
                 'valorServico' => (float)$dps->valores->vServPrest->vServ,
                 'valorLiquido' => (float)$infNFSe->valores->vLiq,
-                'valorTotalRet' => (float)$infNFSe->valores->vTotalRet,
+                'valorTotalRet' => (float)$infNFSe->valores->vTotalRet ?? '0,00',
                 'bcIssqn' => (float)($infNFSe->valores->vBC ?? 0),
                 'aliqAplicada' => (float)($infNFSe->valores->pAliqAplic ?? '0,00'),
                 'issqnApurado' => (float)($infNFSe->valores->vISSQN ?? '0,00'),
@@ -931,7 +931,7 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row8Y + 4);
-        $this->pdf->Cell($col1W, 4, 'R$ 0,00', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, $val['issqnApurado'] > 0 ? 'R$ ' . number_format($val['issqnApurado'], 2, ',', '.') : '-', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row8Y + 4);
         $this->pdf->Cell($col2W, 4, $tribIBSCBS['vBC'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row8Y + 4);
@@ -1052,7 +1052,7 @@ class NfsePdfGenerator
         // Data row
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $row2Y + 4);
-        $this->pdf->Cell($col1W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col1W, 4, $val['valorTotalRet'] > 0 ? 'R$ ' . number_format($val['valorTotalRet'], 2, ',', '.') : '-', 0, 0, 'L');
         $this->pdf->SetXY($col2X, $row2Y + 4);
         $this->pdf->Cell($col2W, 4, 'R$ ' . number_format($val['valorLiquido'], 2, ',', '.'), 0, 0, 'C');
         $this->pdf->SetXY($col3X, $row2Y + 4);
