@@ -166,10 +166,10 @@ class NfsePdfGenerator
                 'pTotTribMun' => isset($dps->valores->trib->totTrib->pTotTrib) ? number_format((float)$dps->valores->trib->totTrib->pTotTrib->pTotTribMun, 2, ',', '.') : '0,00',
                 'opSimpNac' => $opSimpNac,
                 'regApTribSN' => $regApTribSN,
-                'vRetIRRF' => (string)$dps->valores->trib->tribFed->vRetIRRF ?? '-',
-                'vRetCSLL' => (string)$dps->valores->trib->tribFed->vRetCSLL ?? '-',
-                'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? (float) $dps->valores->trib->tribFed->piscofins->vPis : '-',
-                'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? (float) $dps->valores->trib->tribFed->piscofins->vCofins : '-',
+                'vRetIRRF' => isset($dps->valores->trib->tribFed->vRetIRRF) ? 'R$ ' . number_format((float)$dps->valores->trib->tribFed->vRetIRRF, 2, ',', '.') : '-',
+                'vRetCSLL' => isset($dps->valores->trib->tribFed->vRetCSLL) ? 'R$ ' . number_format((float)$dps->valores->trib->tribFed->vRetCSLL, 2, ',', '.') : '-',
+                'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? 'R$ ' . number_format((float) $dps->valores->trib->tribFed->piscofins->vPis, 2, ',', '.') : '-',
+                'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? 'R$ ' . number_format((float) $dps->valores->trib->tribFed->piscofins->vCofins, 2, ',', '.') : '-',
                 'tipoRetencaoISSQN' => $this->tipoRetencaoISSQN((string) $dps->valores->trib->tribMun->tpRetISSQN),
                 'tipoRetencaoPisCofins' => $this->retencaoPisCofins(isset($dps->valores->trib->tribFed->piscofins->tpRetPisCofins) ? (string) $dps->valores->trib->tribFed->piscofins->tpRetPisCofins : '')
             ],
@@ -744,7 +744,7 @@ class NfsePdfGenerator
         $this->pdf->SetFont('helvetica', '', 6);
         $this->pdf->SetXY($col1X, $rowY);
         $this->pdf->MultiCell(
-            $col1W + $col2W + $col3W,
+            $col1W + $col2W + $col3W + $col4W,
             4,
             $descricao,
             0,
@@ -762,7 +762,7 @@ class NfsePdfGenerator
             false
         );
         $this->pdf->SetY(max($this->pdf->GetY(), $row2Y + 4) + 2);
-        $this->pdf->Ln(2);
+        $this->pdf->Ln(4);
     }
 
     private function addTributacao()
@@ -862,7 +862,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col3X, $row5Y + 4);
         $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row5Y + 4);
-        $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
+        $this->pdf->Cell($col4W, 4, $trib['vRetCSLL'], 0, 1, 'L');
 
         // Header row
         $row6Y = $this->pdf->GetY();
@@ -1098,7 +1098,7 @@ class NfsePdfGenerator
         $hHead = 5; // altura do cabecalho
         $hBody = 8; // altura da linha de conteudo
 
-        $this->pdf->Ln(22);
+        $this->pdf->Ln(17);
 
         // CABECALHO
         $this->pdf->SetFont('helvetica', 'B', 7);
@@ -1259,15 +1259,8 @@ class NfsePdfGenerator
         return $situacoes[$cStat] ?? ($cStat !== '' ? "cStat $cStat" : '-');
     }
 
-    private function finalidadeNFSe($cFinNFSe): string {
-        // NFSe/infNFSe/DPS/infDPS/IBSCBS/finNFSe
-        $finNFSe = ['0' => 'NFS-e regular'];
-
-        return $finNFSe[$cFinNFSe] ?? ($cFinNFSe !== '' ? "finNFSe $cFinNFSe" : '-');
-    }
-
     private function ambienteGerador($cAmbGer): string {
-        $ambGer = ['1' => 'Sistema Próprio do Município', '2' => 'SEFIM Nacional'];
+        $ambGer = ['1' => 'Sistema Próprio do Município', '2' => 'SEFIN Nacional'];
         return $ambGer[$cAmbGer] ?? ($cAmbGer !== '' ? "ambGer $cAmbGer" : '-');
     }
 
