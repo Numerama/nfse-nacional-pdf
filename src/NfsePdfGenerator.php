@@ -50,6 +50,12 @@ class NfsePdfGenerator
         return $this;
     }
 
+    public function setDestacaRetencaoIrrf(bool $destacaRetencaoIrrf) {
+        $this->destacaRetencaoIrrf = $destacaRetencaoIrrf;
+
+        return $this;
+    }
+
     public function setCidadeTomador(string $cidadeTomador) {
         $this->cidadeTomador = $cidadeTomador;
 
@@ -1084,7 +1090,12 @@ class NfsePdfGenerator
         $this->pdf->Cell(0, 4, 'Totais aproximados dos Tributos cfe. Lei n° 12.741/2012: Federais: R$ ' . $trib['pTotTribFed'] . '; Estaduais: R$ ' . $trib['pTotTribEst'] . '; Municipais: R$ ' . $trib['pTotTribMun'] . ';', 0, 1, 'L');
         $this->pdf->Ln(1);
         $this->pdf->MultiCell(0, 4, $this->data['servico']['infoComplementar'], 0, 'L', false, 1);
-        $this->pdf->Ln(2);
+        $this->pdf->Ln(1);
+
+        if (isset($this->destacaRetencaoIrrf) && $this->destacaRetencaoIrrf) {
+            $this->pdf->Cell(0, 4, 'Retenção IRRF no total de ' . $trib['vRetIRRF'], 0, 1, 'L');
+            $this->pdf->Ln(1);
+        }
     }
 
     private function addCanhoto(): void
@@ -1098,7 +1109,7 @@ class NfsePdfGenerator
         $hHead = 5; // altura do cabecalho
         $hBody = 8; // altura da linha de conteudo
 
-        $this->pdf->Ln(17);
+        $this->pdf->Ln(10);
 
         // CABECALHO
         $this->pdf->SetFont('helvetica', 'B', 7);
