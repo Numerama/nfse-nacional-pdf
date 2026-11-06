@@ -157,6 +157,7 @@ class NfsePdfGenerator
                 'bcIssqn' => (float)($infNFSe->valores->vBC ?? '0,00'),
                 'aliqAplicada' => (float)($infNFSe->valores->pAliqAplic ?? '0,00'),
                 'issqnApurado' => (float)($infNFSe->valores->vISSQN ?? '0,00'),
+                'descIncondicionado' => (float)($dps->valores->vDescCondIncond->vDescIncond ?? '0,00'),
             ],
             'dps' => [
                 'numero' => (string)$dps->nDPS,
@@ -1036,7 +1037,7 @@ class NfsePdfGenerator
 
         $this->pdf->SetFont('helvetica', 'B', 6);
         $this->pdf->SetXY($col3X, $startY + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, 'R$ ' . number_format($val['descIncondicionado'], 2, ',', '.'), 0, 0, 'L');
         $this->pdf->SetXY($col4X, $startY + 4);
         $this->pdf->Cell($col4W, 4, '-', 0, 1, 'L');
 
