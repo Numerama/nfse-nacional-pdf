@@ -178,7 +178,8 @@ class NfsePdfGenerator
                 'vPis' => isset($dps->valores->trib->tribFed->piscofins->vPis) ? 'R$ ' . number_format((float) $dps->valores->trib->tribFed->piscofins->vPis, 2, ',', '.') : '-',
                 'vCofins' => isset($dps->valores->trib->tribFed->piscofins->vCofins) ? 'R$ ' . number_format((float) $dps->valores->trib->tribFed->piscofins->vCofins, 2, ',', '.') : '-',
                 'tipoRetencaoISSQN' => $this->tipoRetencaoISSQN((string) $dps->valores->trib->tribMun->tpRetISSQN),
-                'tipoRetencaoPisCofins' => $this->retencaoPisCofins(isset($dps->valores->trib->tribFed->piscofins->tpRetPisCofins) ? (string) $dps->valores->trib->tribFed->piscofins->tpRetPisCofins : '')
+                'tipoRetencaoPisCofins' => $this->retencaoPisCofins(isset($dps->valores->trib->tribFed->piscofins->tpRetPisCofins) ? (string) $dps->valores->trib->tribFed->piscofins->tpRetPisCofins : ''),
+                'vRetCp' => isset($dps->valores->trib->tribFed->vRetCP) ? 'R$ ' . number_format((float)$dps->valores->trib->tribFed->vRetCP, 2, ',', '.') : '-'
             ],
             'IbsCbs' => [
                 'cIndOp' => isset($dps->IBSCBS) ? (string)$dps->IBSCBS->cIndOp : '-',
@@ -870,7 +871,7 @@ class NfsePdfGenerator
         $this->pdf->SetXY($col2X, $row5Y + 4);
         $this->pdf->Cell($col2W, 4, $trib['vRetIRRF'], 0, 0, 'L');
         $this->pdf->SetXY($col3X, $row5Y + 4);
-        $this->pdf->Cell($col3W, 4, '-', 0, 0, 'L');
+        $this->pdf->Cell($col3W, 4, $trib['vRetCp'], 0, 0, 'L');
         $this->pdf->SetXY($col4X, $row5Y + 4);
         $this->pdf->Cell($col4W, 4, $trib['vRetCSLL'], 0, 1, 'L');
 
